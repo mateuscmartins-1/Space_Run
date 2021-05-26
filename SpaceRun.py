@@ -37,14 +37,18 @@ class amigo(pygame.sprite.Sprite):
         self.rect.centery = HEIGHT/2
         self.rect.left = 0
         self.speedx = 0
+        self.speedy = 0
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
-
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
         if self.rect.top < 0:
             self.rect.top = 0
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+        if self.rect.left < 0:
+            self.rect.left = 0
 
 
 all_sprites = pygame.sprite.Group()
@@ -69,7 +73,10 @@ while game:
             player_nave.speedy += velocidade
         if event.key == pygame.K_UP:
             player_nave.speedy -= velocidade
-
+        if event.key == pygame.K_RIGHT:
+            player_nave.speedx += velocidade
+        if event.key == pygame.K_LEFT:
+            player_nave.speedx -= velocidade
 
     all_sprites.update()
 
