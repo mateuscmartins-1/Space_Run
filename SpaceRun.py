@@ -17,42 +17,22 @@ NAVE_WIDTH = 130 #Largura da nave
 
 NAVE_HEIGHT = 140 #Altura do nave
 
-
-
-#planeta1_fundo = pygame.image.load(r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\jpg2png\PAISAG~1.png').convert()
-#planeta1_fundo = pygame.transform.scale(planeta1_fundo, (WIDTH, HEIGHT))
-#planeta2_fundo = pygame.image.load(r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\1866.png').convert()
-#planeta2_fundo = pygame.transform.scale(planeta2_fundo, (WIDTH, HEIGHT))
-#planeta3_fundo = pygame.image.load(r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\4Z_2104.w028.n002.36B.p30.36.png').convert_alpha()
-#planeta3_fundo = pygame.transform.scale (planeta3_fundo, (WIDTH, HEIGHT))
-#planeta1 = pygame.image.load (r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\Captura de Tela 2021-05-24 às 16.32.02.png').convert_alpha()
-#planeta1 = pygame.transform.scale (planeta1, (480,560))
-#planeta2 = pygame.image.load (r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\Captura de Tela 2021-05-24 às 16.42.46.png').convert_alpha()
-#planeta2 = pygame.transform.scale (planeta2, (480, 360))
-#planeta3 = pygame.image.load (r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\Captura de Tela 2021-05-24 às 16.43.23.png').convert_alpha()
-#planeta3 = pygame.transform.scale (planeta3, (480, 360))
-#naveaamiga = pygame.image.load (r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\Nave amiga.png').convert_alpha()
-#naveaamiga = pygame.transform.scale (naveaamiga, (130, 140))
-#naveinimiga = pygame.image.load (r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\Nave inimiga.png').convert_alpha()
-#naveinimiga = pygame.transform.scale (naveinimiga, (130, 140))
-
-
-planeta1_fundo = pygame.image.load('/Users/gabriela/Desktop/Captura de Tela 2021-05-24 às 16.06.28.png').convert_alpha()
+planeta1_fundo = pygame.image.load('imgs/Fundo1.jpg').convert_alpha()
 planeta1_fundo = pygame.transform.scale(planeta1_fundo, (WIDTH, HEIGHT))
-planeta2_fundo = pygame.image.load('/Users/gabriela/Downloads/1866 (1).png').convert_alpha()
+planeta2_fundo = pygame.image.load('imgs/Fundo2.png').convert_alpha()
 planeta2_fundo = pygame.transform.scale(planeta2_fundo, (WIDTH, HEIGHT))
-planeta3_fundo = pygame.image.load('/Users/gabriela/Downloads/4Z_2104.w028.n002.36B.p30.36.png').convert_alpha()
+planeta3_fundo = pygame.image.load('imgs/Fundo3.png').convert_alpha()
 planeta3_fundo = pygame.transform.scale (planeta3_fundo, (WIDTH, HEIGHT))
-planeta1 = pygame.image.load ('/Users/gabriela/Desktop/Captura de Tela 2021-05-24 às 16.32.02.png').convert_alpha()
-planeta1 = pygame.transform.scale (planeta1, (480,560))
-planeta2 = pygame.image.load ('/Users/gabriela/Desktop/Captura de Tela 2021-05-24 às 16.42.46.png').convert_alpha()
-planeta2 = pygame.transform.scale (planeta2, (480, 360))
-planeta3 = pygame.image.load ('/Users/gabriela/Desktop/Captura de Tela 2021-05-24 às 16.43.23.png').convert_alpha()
-planeta3 = pygame.transform.scale (planeta3, (480, 360))
-naveaamiga = pygame.image.load ('/Users/gabriela/Downloads/Nave amiga (2).png').convert_alpha()
-naveaamiga = pygame.transform.scale (naveaamiga, (130, 140))
-naveinimiga = pygame.image.load ('/Users/gabriela/Downloads/Nave inimiga (2).png').convert_alpha()
-naveinimiga = pygame.transform.scale (naveinimiga, (130, 140))
+planeta1 = pygame.image.load ('imgs/Planeta1.png').convert_alpha()
+planeta1 = pygame.transform.scale (planeta1, (PLANETA_WIDTH,PLANETA_HEIGHT))
+planeta2 = pygame.image.load ('imgs/Planeta2.png').convert_alpha()
+planeta2 = pygame.transform.scale (planeta2, (PLANETA_WIDTH, PLANETA_HEIGHT))
+planeta3 = pygame.image.load ('imgs/Planeta3.png').convert_alpha()
+planeta3 = pygame.transform.scale (planeta3, (PLANETA_WIDTH, PLANETA_HEIGHT))
+naveaamiga = pygame.image.load ('imgs/Nave_amiga.png').convert_alpha()
+naveaamiga = pygame.transform.scale (naveaamiga, (NAVE_WIDTH, NAVE_HEIGHT))
+naveinimiga = pygame.image.load ('imgs/Nave_inimiga.png').convert_alpha()
+naveinimiga = pygame.transform.scale (naveinimiga, (NAVE_WIDTH, NAVE_HEIGHT))
 
 
 class amigo(pygame.sprite.Sprite):
@@ -71,8 +51,8 @@ class amigo(pygame.sprite.Sprite):
             self.rect.bottom = HEIGHT
         if self.rect.top < 0:
             self.rect.top = 0
-        if self.rect.right > WIDTH:
-            self.rect.right = WIDTH
+        if self.rect.right > WIDTH//2:
+            self.rect.right = WIDTH//2
         if self.rect.left < 0:
             self.rect.left = 0
 
@@ -83,6 +63,13 @@ class inimigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.y = random.randint(0,HEIGHT-NAVE_HEIGHT)
         self.rect.x = WIDTH-NAVE_WIDTH
+        # self.rect.speedx = 2
+    # def update(self):
+    #     self.rect.x = self.speedx
+    #     if self.rect.left > NAVE_WIDTH:
+    #         self.rect.x =
+
+
 
 all_sprites = pygame.sprite.Group()
 
