@@ -10,7 +10,6 @@ tela = pygame.display.set_mode((WIDTH,HEIGHT))
 pygame.display.set_caption('Space Run')
 
 
-game = True
 
 planeta1_fundo = pygame.image.load(r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\jpg2png\PAISAG~1.png').convert()
 planeta1_fundo = pygame.transform.scale(planeta1_fundo, (WIDTH, HEIGHT))
@@ -25,9 +24,9 @@ planeta2 = pygame.transform.scale (planeta2, (480, 360))
 planeta3 = pygame.image.load (r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\Captura de Tela 2021-05-24 às 16.43.23.png').convert_alpha()
 planeta3 = pygame.transform.scale (planeta3, (480, 360))
 naveaamiga = pygame.image.load (r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\Nave amiga.png').convert_alpha()
-naveaamiga = pygame.transform.scale (naveaamiga, (160, 150))
+naveaamiga = pygame.transform.scale (naveaamiga, (130, 140))
 naveinimiga = pygame.image.load (r'C:\Users\mateu\OneDrive\Documents\Insper\Dessoft\Projeto Final\Space Run\Space_Run\Imagens - dessoft\Nave inimiga.png').convert_alpha()
-naveinimiga = pygame.transform.scale (naveinimiga, (160, 150))
+naveinimiga = pygame.transform.scale (naveinimiga, (130, 140))
 
 
 class amigo(pygame.sprite.Sprite):
@@ -37,32 +36,46 @@ class amigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centery = HEIGHT/2
         self.rect.left = 0
+        self.speedy = 0
     def update(self):
 
-        self.rect.y += self.speedx
+        self.rect.y += self.speedy
 
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
-        if self.rect.top > 0:
+        if self.rect.top < 0:
             self.rect.top = 5
+
+all_sprites = pygame.sprite.Group()
+
 
 
 player_nave = amigo(naveaamiga)
+all_sprites.add(player_nave)
 
+
+FPS = 30
+velocidade = 3
+game = True
+clock = pygame.time.Clock()
 while game:
+    clock.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             game = False
-            
+    if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_DOWN:
+            player_nave.speedy += velocidade
+        if event.key == pygame.K_UP:
+            player_nave.speedy -= velocidade
 
 
-    tela.fill((0, 0, 0))  
-    tela.blit(planeta1_fundo, (0,0))
-    tela.blit(player_nave.image, player_nave.rect)
-    tela.blit(planeta2,(0,0))
+    all_sprites.update()
+
+    tela.blit(planeta1_fundo, (0, 0))
+    all_sprites.draw(tela)
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
 
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
-
