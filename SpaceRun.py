@@ -36,15 +36,16 @@ class amigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centery = HEIGHT/2
         self.rect.left = 0
-        self.speedy = 0
+        self.speedx = 0
     def update(self):
-
+        self.rect.x += self.speedx
         self.rect.y += self.speedy
 
         if self.rect.bottom > HEIGHT:
             self.rect.bottom = HEIGHT
         if self.rect.top < 0:
-            self.rect.top = 5
+            self.rect.top = 0
+
 
 all_sprites = pygame.sprite.Group()
 
@@ -55,7 +56,7 @@ all_sprites.add(player_nave)
 
 
 FPS = 30
-velocidade = 3
+velocidade = 2
 game = True
 clock = pygame.time.Clock()
 while game:
