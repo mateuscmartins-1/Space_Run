@@ -17,7 +17,7 @@ NAVE_WIDTH = 130 #Largura da nave
 
 NAVE_HEIGHT = 140 #Altura do nave
 
-planeta1_fundo = pygame.image.load('imgs/Fundo1.jpg').convert_alpha()
+planeta1_fundo = pygame.image.load('imgs/Fundo1.png').convert_alpha()
 planeta1_fundo = pygame.transform.scale(planeta1_fundo, (WIDTH, HEIGHT))
 planeta2_fundo = pygame.image.load('imgs/Fundo2.png').convert_alpha()
 planeta2_fundo = pygame.transform.scale(planeta2_fundo, (WIDTH, HEIGHT))
@@ -63,21 +63,25 @@ class inimigo(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.y = random.randint(0,HEIGHT-NAVE_HEIGHT)
         self.rect.x = WIDTH-NAVE_WIDTH
-        # self.rect.speedx = 2
-    # def update(self):
-    #     self.rect.x = self.speedx
-    #     if self.rect.left > NAVE_WIDTH:
-    #         self.rect.x =
+        self.speedx = -3
+    def update(self):
+        self.rect.x += self.speedx
+        if self.rect.left < 1100:
+            self.rect.x = 1100
+        self.speedx = -3
 
 
 
 all_sprites = pygame.sprite.Group()
 
 
-inimigo_nave = inimigo(naveinimiga)
+
 player_nave = amigo(naveaamiga)
 all_sprites.add(player_nave)
-all_sprites.add(inimigo_nave)
+
+for i in range(2):
+    inimigo_nave = inimigo(naveinimiga)
+    all_sprites.add(inimigo_nave)
 
 
 FPS = 30
