@@ -21,7 +21,7 @@ TIRO_WIDTH = 50 #Largura dos tiros
 
 TIRO_HEIGHT = 50 #Altura dos tiros
 
-planeta1_fundo = pygame.image.load('imgs/Fundo1.jpg').convert_alpha()
+planeta1_fundo = pygame.image.load('imgs/Fundo1.png').convert_alpha()
 planeta1_fundo = pygame.transform.scale(planeta1_fundo, (WIDTH, HEIGHT))
 planeta2_fundo = pygame.image.load('imgs/Fundo2.png').convert_alpha()
 planeta2_fundo = pygame.transform.scale(planeta2_fundo, (WIDTH, HEIGHT))
@@ -55,6 +55,9 @@ class amigo(pygame.sprite.Sprite):
         self.all_sprites = all_sprites
         self.all_tiros = all_tiros
         self.tiro_img = img_tiro
+        self.ultimo_tiro = pygame.time.get_ticks()
+        self.intervalo_tiro = 800
+
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -67,9 +70,13 @@ class amigo(pygame.sprite.Sprite):
         if self.rect.left < 0:
             self.rect.left = 0
     def tiro(self):
-        bala = Tiro_Amigo(self.tiro_img, self.rect.bottom, self.rect.centerx)
-        self.all_sprites.add(bala)
-        self.all_tiros.add(bala)
+        ticks = pygame.time.get_ticks()
+        ticks_passados = ticks - self.ultimo_tiro
+        if ticks_passados > self.intervalo_tiro:
+            self.ultimo_tiro = ticks
+            bala = Tiro_Amigo(self.tiro_img, self.rect.bottom, self.rect.centerx)
+            self.all_sprites.add(bala)
+            self.all_tiros.add(bala)
 
 class inimigo(pygame.sprite.Sprite):
     def __init__(self,img):
