@@ -164,7 +164,8 @@ for i in range(2):
     all_inimigos.add(inimigo_nave)
     all_tiros2.add(inimigo_nave)
 
-velocidade = 20 #Velocidade 
+vidas = 3 #Vidas da Nave
+velocidade = 10 #Velocidade 
 game = True
 FPS = 30
 clock = pygame.time.Clock()
@@ -204,7 +205,9 @@ while game:
         all_tiros2.add(i)
     
     if danos2:
-        game = False
+        vidas-= 1
+        if vidas ==0:
+            game = False
 
     tela.blit(planeta1_fundo, (0, 0))
     all_sprites.draw(tela)
