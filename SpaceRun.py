@@ -79,18 +79,32 @@ class amigo(pygame.sprite.Sprite):
             self.all_tiros.add(bala)
 
 class inimigo(pygame.sprite.Sprite):
-    def __init__(self,img):
+    def __init__(self,img,all_sprites,all_tiros,img_tiro):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.y = random.randint(0,HEIGHT-NAVE_HEIGHT)
         self.rect.x = WIDTH-NAVE_WIDTH
+        self.all_sprites = all_sprites
+        self.all_tiros = all_tiros
+        self.tiro_img = img_tiro
         self.speedx = -3
+        self.ultimo_tiro = pygame.time.get_ticks()
+        self.intervalo_tiro = 800
     def update(self):
         self.rect.x += self.speedx
         if self.rect.left < 1000:
             self.rect.x = 1000
         self.speedx = -3
+    def tiro(self):
+        ticks = pygame.time.get_ticks()
+        ticks_passados = ticks - self.ultimo_tiro
+        if ticks_passados > self.intervalo_tiro:
+            self.ultimo_tiro = ticks
+            bala = Tiro_Inimigo(self.tiro_img, self.rect.bottom, self.rect.centerx)
+            self.all_sprites.add(bala)
+            self.all_tiros.add(bala)
+
 
 
 class Tiro_Amigo(pygame.sprite.Sprite):
@@ -106,9 +120,25 @@ class Tiro_Amigo(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 
+class Tiro_Inimigo(pygame.sprite.Sprite):
+    def __init__(self, img, bottom, centerx):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = img
+        self.rect = self.image.get_rect()
+        self.rect.x = WIDTH-TIRO_WIDTH 
+        self.rect.centerx = centerx
+        self.rect.bottom = bottom
+        self.speedx = -8  
+    def update(self):
+        self.rect.x += self.speedx
+        if self.rect.right < 0:
+            self.kill()
+        self.speedx = -8
+
 all_sprites = pygame.sprite.Group()
 all_tiros = pygame.sprite.Group()
 all_inimigos = pygame.sprite.Group()
+all_tiros2 = pygame.sprite.Group()
 
 
 
@@ -116,9 +146,10 @@ player_nave = amigo(naveaamiga, all_sprites, all_tiros, tiro_amigo)
 all_sprites.add(player_nave)
 
 for i in range(2):
-    inimigo_nave = inimigo(naveinimiga)
+    inimigo_nave = inimigo(naveinimiga,all_sprites,all_tiros2,tiro_inimigo)
     all_sprites.add(inimigo_nave)
     all_inimigos.add(inimigo_nave)
+    all_tiros2.add(inimigo_nave)
 
 velocidade = 3.5 #Velocidade 
 velocidade2 = 2  #Velocidade2 
@@ -152,12 +183,16 @@ while game:
                 player_nave.speedx -= velocidade
 
     all_sprites.update()
-    hits = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True)
-    
-    for Enemy in hits:
-        i = inimigo(naveinimiga)
+    danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True)
+    danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True)
+    for Enemy in danos:
+        i = inimigo(naveinimiga,all_sprites,all_tiros2,tiro_inimigo)
         all_sprites.add(i)
         all_inimigos.add(i)
+        all_tiros2.add(i)
+    
+    if danos2:
+        game = False
 
     tela.blit(planeta1_fundo, (0, 0))
     all_sprites.draw(tela)
