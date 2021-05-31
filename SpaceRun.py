@@ -166,6 +166,7 @@ for i in range(2):
 
 vidas = 3 #Vidas da Nave
 velocidade = 10 #Velocidade 
+kills = 0 #pontuação
 game = True
 FPS = 30
 clock = pygame.time.Clock()
@@ -185,15 +186,6 @@ while game:
                 player_nave.speedx -= velocidade
             if event.key == pygame.K_SPACE:
                 player_nave.tiro()
-        # if event.type == pygame.KEYUP:
-        #     if event.key == pygame.K_DOWN:
-        #         player_nave.speedy = 0
-        #     if event.key == pygame.K_UP:
-        #         player_nave.speedy = 0
-        #     if event.key == pygame.K_RIGHT:
-        #         player_nave.speedx = 0
-        #     if event.key == pygame.K_LEFT:
-        #         player_nave.speedx = 0
 
     all_sprites.update()
     danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True)
@@ -203,7 +195,9 @@ while game:
         all_sprites.add(i)
         all_inimigos.add(i)
         all_tiros2.add(i)
-    
+        kills += 1 
+    if kills == 5: 
+        game = False 
     if danos2:
         vidas-= 1
         if vidas ==0:
