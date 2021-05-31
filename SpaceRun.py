@@ -69,6 +69,14 @@ class amigo(pygame.sprite.Sprite):
             self.rect.right = WIDTH//2
         if self.rect.left < 0:
             self.rect.left = 0
+        if self.speedx > 0:
+            self.speedx -= 1
+        elif self.speedx < 0:
+            self.speedx += 1
+        if self.speedy > 0:
+            self.speedy -= 1
+        elif self.speedy < 0:
+            self.speedy += 1
     def tiro(self):
         ticks = pygame.time.get_ticks()
         ticks_passados = ticks - self.ultimo_tiro
@@ -90,12 +98,17 @@ class inimigo(pygame.sprite.Sprite):
         self.tiro_img = img_tiro
         self.speedx = -3
         self.ultimo_tiro = pygame.time.get_ticks()
-        self.intervalo_tiro = 800
+        self.intervalo_tiro = 10
     def update(self):
         self.rect.x += self.speedx
         if self.rect.left < 1000:
             self.rect.x = 1000
         self.speedx = -3
+        self.intervalo_tiro -= 1
+        if self.intervalo_tiro <= 0:
+            self.intervalo_tiro = 10 + random.randint(1,100)
+            self.tiro()
+        
     def tiro(self):
         ticks = pygame.time.get_ticks()
         ticks_passados = ticks - self.ultimo_tiro
@@ -151,8 +164,7 @@ for i in range(2):
     all_inimigos.add(inimigo_nave)
     all_tiros2.add(inimigo_nave)
 
-velocidade = 3.5 #Velocidade 
-velocidade2 = 2  #Velocidade2 
+velocidade = 20 #Velocidade 
 game = True
 FPS = 30
 clock = pygame.time.Clock()
@@ -163,24 +175,24 @@ while game:
             game = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:
-                player_nave.speedy += velocidade2
+                player_nave.speedy += velocidade
             if event.key == pygame.K_UP:
-                player_nave.speedy -= velocidade2
+                player_nave.speedy -= velocidade
             if event.key == pygame.K_RIGHT:
                 player_nave.speedx += velocidade
             if event.key == pygame.K_LEFT:
                 player_nave.speedx -= velocidade
             if event.key == pygame.K_SPACE:
                 player_nave.tiro()
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_DOWN:
-                player_nave.speedy += velocidade2
-            if event.key == pygame.K_UP:
-                player_nave.speedy -= velocidade2
-            if event.key == pygame.K_RIGHT:
-                player_nave.speedx += velocidade
-            if event.key == pygame.K_LEFT:
-                player_nave.speedx -= velocidade
+        # if event.type == pygame.KEYUP:
+        #     if event.key == pygame.K_DOWN:
+        #         player_nave.speedy = 0
+        #     if event.key == pygame.K_UP:
+        #         player_nave.speedy = 0
+        #     if event.key == pygame.K_RIGHT:
+        #         player_nave.speedx = 0
+        #     if event.key == pygame.K_LEFT:
+        #         player_nave.speedx = 0
 
     all_sprites.update()
     danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True)
