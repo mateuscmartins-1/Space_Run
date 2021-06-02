@@ -209,14 +209,16 @@ while game:
         if event.type == pygame.QUIT:
             game = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:
-                player_nave.speedy += velocidade
-            if event.key == pygame.K_UP:
+            # Ao pressionar alguma dessas teclas o player se movimenta
+            if event.key == pygame.K_w:
                 player_nave.speedy -= velocidade
-            if event.key == pygame.K_RIGHT:
-                player_nave.speedx += velocidade
-            if event.key == pygame.K_LEFT:
+            if event.key == pygame.K_a:
                 player_nave.speedx -= velocidade
+            if event.key == pygame.K_s:
+                player_nave.speedy += velocidade
+            if event.key == pygame.K_d:
+                player_nave.speedx += velocidade
+            # Ao pressionar a barra de espaço o player realiza o disparo
             if event.key == pygame.K_SPACE:
                 player_nave.tiro()
 
@@ -233,7 +235,6 @@ while game:
         all_inimigos.add(i)
         all_tiros2.add(i)
         kills += 1 
-<<<<<<< HEAD
     if kills == 2: 
         fases = assets["planeta2_fundo"]
         if controle:
@@ -252,10 +253,6 @@ while game:
             all_tiros2.add(i)
             i.fases = 3
             controle2 = False
-=======
-    if kills == 5: 
-        game = False 
->>>>>>> ab189b0e9ce4c3de82c84a2d3cdddf51ce03ee55
     if danos2:
         vidas-= 1
         if vidas ==0:
