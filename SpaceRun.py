@@ -233,6 +233,7 @@ while game:
         all_inimigos.add(i)
         all_tiros2.add(i)
         kills += 1 
+<<<<<<< HEAD
     if kills == 2: 
         fases = assets["planeta2_fundo"]
         if controle:
@@ -251,6 +252,10 @@ while game:
             all_tiros2.add(i)
             i.fases = 3
             controle2 = False
+=======
+    if kills == 5: 
+        game = False 
+>>>>>>> ab189b0e9ce4c3de82c84a2d3cdddf51ce03ee55
     if danos2:
         vidas-= 1
         if vidas ==0:
