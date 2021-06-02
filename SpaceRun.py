@@ -3,6 +3,8 @@ import pygame
 import random
 
 pygame.init()
+pygame.mixer.init()
+
 
 WIDTH = 1252
 HEIGHT = 556
@@ -21,26 +23,36 @@ TIRO_WIDTH = 50 #Largura dos tiros
 
 TIRO_HEIGHT = 50 #Altura dos tiros
 
-planeta1_fundo = pygame.image.load('imgs/Fundo1.png').convert_alpha()
-planeta1_fundo = pygame.transform.scale(planeta1_fundo, (WIDTH, HEIGHT))
-planeta2_fundo = pygame.image.load('imgs/Fundo2.png').convert_alpha()
-planeta2_fundo = pygame.transform.scale(planeta2_fundo, (WIDTH, HEIGHT))
-planeta3_fundo = pygame.image.load('imgs/Fundo3.png').convert_alpha()
-planeta3_fundo = pygame.transform.scale (planeta3_fundo, (WIDTH, HEIGHT))
-planeta1 = pygame.image.load ('imgs/Planeta1.png').convert_alpha()
-planeta1 = pygame.transform.scale (planeta1, (PLANETA_WIDTH,PLANETA_HEIGHT))
-planeta2 = pygame.image.load ('imgs/Planeta2.png').convert_alpha()
-planeta2 = pygame.transform.scale (planeta2, (PLANETA_WIDTH, PLANETA_HEIGHT))
-planeta3 = pygame.image.load ('imgs/Planeta3.png').convert_alpha()
-planeta3 = pygame.transform.scale (planeta3, (PLANETA_WIDTH, PLANETA_HEIGHT))
-naveaamiga = pygame.image.load ('imgs/Nave_amiga.png').convert_alpha()
-naveaamiga = pygame.transform.scale (naveaamiga, (NAVE_WIDTH, NAVE_HEIGHT))
-naveinimiga = pygame.image.load ('imgs/Nave_inimiga.png').convert_alpha()
-naveinimiga = pygame.transform.scale (naveinimiga, (NAVE_WIDTH, NAVE_HEIGHT))
-tiro_amigo = pygame.image.load ('imgs/Tiro amigo.png').convert_alpha()#Tiro do player 
-tiro_amigo = pygame.transform.scale (tiro_amigo, (TIRO_WIDTH, TIRO_HEIGHT)) #Ajuste do tamanho da imagem do tiro do player
-tiro_inimigo = pygame.image.load ('imgs/Tiro inimigo.png').convert_alpha() #Tiro do player 
-tiro_inimigo = pygame.transform.scale (tiro_inimigo, (TIRO_WIDTH, TIRO_HEIGHT)) #Ajuste do tamanho da imagem do tiro do player
+assets = {}
+#Imagens 
+assets["planeta1_fundo"] = pygame.image.load('imgs/Fundo1.png').convert_alpha()
+assets["planeta1_fundo"] = pygame.transform.scale(assets["planeta1_fundo"], (WIDTH, HEIGHT))
+assets["planeta2_fundo"] = pygame.image.load('imgs/Fundo2.png').convert_alpha()
+assets["planeta2_fundo"] = pygame.transform.scale(assets["planeta2_fundo"], (WIDTH, HEIGHT))
+assets["planeta3_fundo"] = pygame.image.load('imgs/Fundo3.png').convert_alpha()
+assets["planeta3_fundo"] = pygame.transform.scale (assets["planeta3_fundo"], (WIDTH, HEIGHT))
+assets["planeta1"] = pygame.image.load ('imgs/Planeta1.png').convert_alpha()
+assets["planeta1"] = pygame.transform.scale (assets["planeta1"], (PLANETA_WIDTH,PLANETA_HEIGHT))
+assets["planeta2"] = pygame.image.load ('imgs/Planeta2.png').convert_alpha()
+assets["planeta2"] = pygame.transform.scale (assets["planeta2"], (PLANETA_WIDTH, PLANETA_HEIGHT))
+assets["planeta3"] = pygame.image.load ('imgs/Planeta3.png').convert_alpha()
+assets["planeta3"] = pygame.transform.scale (assets["planeta3"], (PLANETA_WIDTH, PLANETA_HEIGHT))
+assets["naveaamiga"] = pygame.image.load ('imgs/Nave_amiga.png').convert_alpha()
+assets["naveaamiga"] = pygame.transform.scale (assets["naveaamiga"], (NAVE_WIDTH, NAVE_HEIGHT))
+assets["naveinimiga"] = pygame.image.load ('imgs/Nave_inimiga.png').convert_alpha()
+assets["naveinimiga"] = pygame.transform.scale (assets["naveinimiga"], (NAVE_WIDTH, NAVE_HEIGHT))
+assets["tiro_amigo"] = pygame.image.load ('imgs/Tiro amigo.png').convert_alpha() 
+assets["tiro_amigo"] = pygame.transform.scale (assets["tiro_amigo"], (TIRO_WIDTH, TIRO_HEIGHT))
+assets["tiro_inimigo"] = pygame.image.load ('imgs/Tiro inimigo.png').convert_alpha() 
+assets["tiro_inimigo"] = pygame.transform.scale (assets["tiro_inimigo"], (TIRO_WIDTH, TIRO_HEIGHT)) 
+
+#Sons
+assets["musica"] = pygame.mixer.music.load('sons/Musica-pygame.ogg')
+pygame.mixer.music.set_volume(0.4)
+assets["game_over"] = pygame.mixer.Sound('sons/Game-over.wav')
+assets['proxima_fase'] = pygame.mixer.Sound('sons/Próxima fase.wav')
+assets['tiro_acertado'] = pygame.mixer.Sound('sons/Tiro-acertado.wav')
+assets['tiro_da_nave'] = pygame.mixer.Sound('sons/Tiro-da-nave.wav')
 
 
 class amigo(pygame.sprite.Sprite):
@@ -86,6 +98,7 @@ class amigo(pygame.sprite.Sprite):
             self.all_sprites.add(bala)
             self.all_tiros.add(bala)
 
+
 class inimigo(pygame.sprite.Sprite):
     def __init__(self,img,all_sprites,all_tiros,img_tiro):
         pygame.sprite.Sprite.__init__(self)
@@ -117,7 +130,6 @@ class inimigo(pygame.sprite.Sprite):
             bala = Tiro_Inimigo(self.tiro_img, self.rect.bottom, self.rect.centerx)
             self.all_sprites.add(bala)
             self.all_tiros.add(bala)
-
 
 
 class Tiro_Amigo(pygame.sprite.Sprite):
@@ -152,23 +164,29 @@ all_sprites = pygame.sprite.Group()
 all_tiros = pygame.sprite.Group()
 all_inimigos = pygame.sprite.Group()
 all_tiros2 = pygame.sprite.Group()
+groups = {}
+groups['all_sprites'] = all_sprites
+groups['all_sprites'] = all_tiros
+groups['all_sprites'] = all_inimigos
+groups['all_sprites'] = all_tiros2
 
 
-
-player_nave = amigo(naveaamiga, all_sprites, all_tiros, tiro_amigo)
+player_nave = amigo(assets['naveaamiga'], all_sprites, all_tiros, assets['tiro_amigo'])
 all_sprites.add(player_nave)
 
 for i in range(2):
-    inimigo_nave = inimigo(naveinimiga,all_sprites,all_tiros2,tiro_inimigo)
+    inimigo_nave = inimigo(assets['naveinimiga'],all_sprites,all_tiros2,assets['tiro_inimigo'])
     all_sprites.add(inimigo_nave)
     all_inimigos.add(inimigo_nave)
     all_tiros2.add(inimigo_nave)
-
+pontuacao = 0
 vidas = 3 #Vidas da Nave
 velocidade = 10 #Velocidade 
 game = True
 FPS = 30
 clock = pygame.time.Clock()
+
+pygame.mixer.music.play(loops=-1)
 while game:
     clock.tick(FPS)
     for event in pygame.event.get():
@@ -199,17 +217,18 @@ while game:
     danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True)
     danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True)
     for Enemy in danos:
-        i = inimigo(naveinimiga,all_sprites,all_tiros2,tiro_inimigo)
+        i = inimigo(assets["naveinimiga"],all_sprites,all_tiros2,assets['tiro_inimigo'])
         all_sprites.add(i)
         all_inimigos.add(i)
         all_tiros2.add(i)
+        pontuacao += 100
     
     if danos2:
         vidas-= 1
         if vidas ==0:
             game = False
 
-    tela.blit(planeta1_fundo, (0, 0))
+    tela.blit(assets["planeta1_fundo"], (0, 0))
     all_sprites.draw(tela)
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
