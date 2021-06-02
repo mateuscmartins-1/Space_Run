@@ -54,9 +54,10 @@ assets['proxima_fase'] = pygame.mixer.Sound('sons/Próxima fase.wav')
 assets['tiro_acertado'] = pygame.mixer.Sound('sons/Tiro-acertado.wav')
 assets['tiro_da_nave'] = pygame.mixer.Sound('sons/Tiro-da-nave.wav')
 
-
+#Fases
+fases = assets["planeta1_fundo"]
 class amigo(pygame.sprite.Sprite):
-    def __init__(self,img,all_sprites,all_tiros,img_tiro):
+    def __init__(self,img,all_sprites,all_tiros,img_tiro,som_tiro):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
         self.rect = self.image.get_rect()
@@ -69,6 +70,7 @@ class amigo(pygame.sprite.Sprite):
         self.tiro_img = img_tiro
         self.ultimo_tiro = pygame.time.get_ticks()
         self.intervalo_tiro = 800
+        self.som_tiro = som_tiro
 
     def update(self):
         self.rect.x += self.speedx
@@ -97,6 +99,8 @@ class amigo(pygame.sprite.Sprite):
             bala = Tiro_Amigo(self.tiro_img, self.rect.bottom, self.rect.centerx)
             self.all_sprites.add(bala)
             self.all_tiros.add(bala)
+            self.som_tiro.play()
+            
 
 
 class inimigo(pygame.sprite.Sprite):
@@ -112,6 +116,7 @@ class inimigo(pygame.sprite.Sprite):
         self.speedx = -3
         self.ultimo_tiro = pygame.time.get_ticks()
         self.intervalo_tiro = 10
+        self.fases = 1
     def update(self):
         self.rect.x += self.speedx
         if self.rect.left < 1000:
@@ -119,9 +124,15 @@ class inimigo(pygame.sprite.Sprite):
         self.speedx = -3
         self.intervalo_tiro -= 1
         if self.intervalo_tiro <= 0:
-            self.intervalo_tiro = 10 + random.randint(1,100)
-            self.tiro()
-        
+            if self.fases == 1:
+                self.intervalo_tiro = 10 + random.randint(1,100)
+                self.tiro()
+            if self.fases == 2:
+                self.intervalo_tiro = 10 + random.randint(1,50)
+                self.tiro()
+            if self.fases == 3:
+                self.intervalo_tiro = 10 + random.randint(1,25)
+                self.tiro()
     def tiro(self):
         ticks = pygame.time.get_ticks()
         ticks_passados = ticks - self.ultimo_tiro
@@ -166,24 +177,28 @@ all_inimigos = pygame.sprite.Group()
 all_tiros2 = pygame.sprite.Group()
 groups = {}
 groups['all_sprites'] = all_sprites
-groups['all_sprites'] = all_tiros
-groups['all_sprites'] = all_inimigos
-groups['all_sprites'] = all_tiros2
+groups['all_tiros'] = all_tiros
+groups['all_inimigos'] = all_inimigos
+groups['all_tiros2'] = all_tiros2
 
 
-player_nave = amigo(assets['naveaamiga'], all_sprites, all_tiros, assets['tiro_amigo'])
+player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
 all_sprites.add(player_nave)
 
 for i in range(2):
-    inimigo_nave = inimigo(assets['naveinimiga'],all_sprites,all_tiros2,assets['tiro_inimigo'])
+    inimigo_nave = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
     all_sprites.add(inimigo_nave)
     all_inimigos.add(inimigo_nave)
     all_tiros2.add(inimigo_nave)
-pontuacao = 0
-vidas = 3 #Vidas da Nave
+
+vidas = 400 #Vidas da Nave
 velocidade = 10 #Velocidade 
 kills = 0 #pontuação
+
+controle = True
+controle2 = True
 game = True
+
 FPS = 30
 clock = pygame.time.Clock()
 
@@ -209,24 +224,39 @@ while game:
     danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True)
     danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True)
     for Enemy in danos:
-        i = inimigo(assets["naveinimiga"],all_sprites,all_tiros2,assets['tiro_inimigo'])
+        i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
+        if fases == assets["planeta2_fundo"]:
+            i.fases = 2
+        if fases == assets["planeta3_fundo"]:
+            i.fases = 3
         all_sprites.add(i)
         all_inimigos.add(i)
         all_tiros2.add(i)
-<<<<<<< HEAD
-        pontuacao += 100
-    
-=======
         kills += 1 
-    if kills == 5: 
-        game = False 
->>>>>>> 7507cd77d2dd2f3d21154c21250982c4786ccc6e
+    if kills == 2: 
+        fases = assets["planeta2_fundo"]
+        if controle:
+            i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
+            all_sprites.add(i)
+            all_inimigos.add(i)
+            all_tiros2.add(i)
+            i.fases = 2
+            controle = False
+    elif kills == 3:
+        fases = assets["planeta3_fundo"]
+        if controle2:
+            i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
+            all_sprites.add(i)
+            all_inimigos.add(i)
+            all_tiros2.add(i)
+            i.fases = 3
+            controle2 = False
     if danos2:
         vidas-= 1
         if vidas ==0:
             game = False
 
-    tela.blit(assets["planeta1_fundo"], (0, 0))
+    tela.blit(fases, (0, 0))
     all_sprites.draw(tela)
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
