@@ -213,14 +213,9 @@ while game:
         all_sprites.add(i)
         all_inimigos.add(i)
         all_tiros2.add(i)
-<<<<<<< HEAD
-        pontuacao += 100
-    
-=======
         kills += 1 
     if kills == 5: 
         game = False 
->>>>>>> 7507cd77d2dd2f3d21154c21250982c4786ccc6e
     if danos2:
         vidas-= 1
         if vidas ==0:
