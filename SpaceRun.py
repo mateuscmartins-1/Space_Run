@@ -46,6 +46,11 @@ assets["tiro_amigo"] = pygame.transform.scale (assets["tiro_amigo"], (TIRO_WIDTH
 assets["tiro_inimigo"] = pygame.image.load ('imgs/Tiro inimigo.png').convert_alpha() 
 assets["tiro_inimigo"] = pygame.transform.scale (assets["tiro_inimigo"], (TIRO_WIDTH, TIRO_HEIGHT)) 
 
+
+#Fontes
+assets['game_over_screen'] = pygame.font.Font('fonts/PressStart2P.ttf', 55)
+
+
 #Sons
 assets["musica"] = pygame.mixer.music.load('sons/Musica-pygame.ogg')
 pygame.mixer.music.set_volume(0.4)
@@ -191,12 +196,15 @@ for i in range(2):
     all_inimigos.add(inimigo_nave)
     all_tiros2.add(inimigo_nave)
 
-vidas = 400 #Vidas da Nave
+vidas = 3 #Vidas da Nave
 velocidade = 10 #Velocidade 
-kills = 0 #pontuação
-
+kills = 0 #pontuação_fase1
+kills2 = 0 #pontuação_fase2
+kills3 = 0 #pontuação_fase_final
 controle = True
 controle2 = True
+controle3 = True
+controle4 = True
 game = True
 
 FPS = 30
@@ -253,15 +261,29 @@ while game:
             all_tiros2.add(i)
             i.fases = 3
             controle2 = False
+    elif kills == 4:
+        assets['game_over'].play()
+        game = False
+    if fases == assets["planeta2_fundo"] and controle3:
+        assets['proxima_fase'].play()
+        controle3 = False
+    elif fases == assets["planeta3_fundo"] and controle4:
+        assets['proxima_fase'].play()
+        controle4 = False
+    if danos:
+        assets['tiro_acertado'].play()
     if danos2:
         vidas-= 1
+        if vidas != 0:
+            player_nave.kill()
+            player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
+            all_sprites.add(player_nave)
         if vidas ==0:
             game = False
-
     tela.blit(fases, (0, 0))
     all_sprites.draw(tela)
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
-
+  
 # ===== Finalização =====
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
