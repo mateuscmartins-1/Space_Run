@@ -15,13 +15,13 @@ PLANETA_WIDTH = 480 #Largura do Planeta
 
 PLANETA_HEIGHT = 360 #Altura do Planeta
 
-NAVE_WIDTH = 130 #Largura da nave
+NAVE_WIDTH = 80 #Largura da nave
 
-NAVE_HEIGHT = 140 #Altura do nave
+NAVE_HEIGHT = 90 #Altura do nave
 
-TIRO_WIDTH = 50 #Largura dos tiros
+TIRO_WIDTH = 30 #Largura dos tiros
 
-TIRO_HEIGHT = 50 #Altura dos tiros
+TIRO_HEIGHT = 30 #Altura dos tiros
 
 assets = {}
 #Imagens 
@@ -47,8 +47,9 @@ assets["tiro_inimigo"] = pygame.image.load ('imgs/Tiro inimigo.png').convert_alp
 assets["tiro_inimigo"] = pygame.transform.scale (assets["tiro_inimigo"], (TIRO_WIDTH, TIRO_HEIGHT)) 
 
 
-#Fontes
-assets['game_over_screen'] = pygame.font.Font('fonts/PressStart2P.ttf', 55)
+# Fontes
+assets["pontuação"] = pygame.font.Font('fontes/PressStart2P.ttf', 25)
+assets['game_over_screen'] = pygame.font.Font('fontes/PressStart2P.ttf', 55)
 
 
 #Sons
@@ -196,11 +197,12 @@ for i in range(2):
     all_inimigos.add(inimigo_nave)
     all_tiros2.add(inimigo_nave)
 
-vidas = 3 #Vidas da Nave
-velocidade = 10 #Velocidade 
-kills = 0 #pontuação_fase1
-kills2 = 0 #pontuação_fase2
-kills3 = 0 #pontuação_fase_final
+
+kills = 0       # Eliminações do player
+vidas = 10      # Vidas da Nave
+pontuacao = 0   # Pontuação do player
+velocidade = 10 # Velocidade 
+      
 controle = True
 controle2 = True
 controle3 = True
@@ -243,7 +245,8 @@ while game:
         all_inimigos.add(i)
         all_tiros2.add(i)
         kills += 1 
-    if kills == 2: 
+        pontuacao += 5
+    if kills == 4: 
         fases = assets["planeta2_fundo"]
         if controle:
             i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
@@ -252,7 +255,7 @@ while game:
             all_tiros2.add(i)
             i.fases = 2
             controle = False
-    elif kills == 3:
+    elif kills == 10:
         fases = assets["planeta3_fundo"]
         if controle2:
             i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
@@ -261,9 +264,10 @@ while game:
             all_tiros2.add(i)
             i.fases = 3
             controle2 = False
-    elif kills == 4:
+    elif kills == 18:
         assets['game_over'].play()
         game = False
+        print("VOCÊ VENCEU!!!")
     if fases == assets["planeta2_fundo"] and controle3:
         assets['proxima_fase'].play()
         controle3 = False
@@ -278,12 +282,25 @@ while game:
             player_nave.kill()
             player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
             all_sprites.add(player_nave)
-        if vidas ==0:
+        else:
             game = False
     tela.blit(fases, (0, 0))
     all_sprites.draw(tela)
+
+    # Colocando a Pontuação
+    text_surface = assets['pontuação'].render("{:03d}".format(pontuacao), True, (0, 255, 0))
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (WIDTH / 2,  10)
+    tela.blit(text_surface, text_rect)
+
+    # Colocando as vidas
+    text_surface = assets['pontuação'].render(chr(9827) * vidas, True, (0, 255, 0))
+    text_rect = text_surface.get_rect()
+    text_rect.bottomleft = (10, HEIGHT - 10)
+    tela.blit(text_surface, text_rect)
+
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
   
-# ===== Finalização =====
+# ===== Finalização ===== #
 pygame.quit()  # Função do PyGame que finaliza os recursos utilizados
