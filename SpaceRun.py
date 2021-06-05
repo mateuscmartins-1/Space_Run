@@ -46,11 +46,9 @@ assets["tiro_amigo"] = pygame.transform.scale (assets["tiro_amigo"], (TIRO_WIDTH
 assets["tiro_inimigo"] = pygame.image.load ('imgs/Tiro inimigo.png').convert_alpha() 
 assets["tiro_inimigo"] = pygame.transform.scale (assets["tiro_inimigo"], (TIRO_WIDTH, TIRO_HEIGHT)) 
 
-
 # Fontes
 assets["pontuação"] = pygame.font.Font('fontes/PressStart2P.ttf', 25)
-assets['game_over_screen'] = pygame.font.Font('fontes/PressStart2P.ttf', 55)
-
+assets["game_over_screen"] = pygame.font.Font('fontes/PressStart2P.ttf', 55)
 
 #Sons
 assets["musica"] = pygame.mixer.music.load('sons/Musica-pygame.ogg')
@@ -66,6 +64,7 @@ class amigo(pygame.sprite.Sprite):
     def __init__(self,img,all_sprites,all_tiros,img_tiro,som_tiro):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.centery = HEIGHT/2
         self.rect.left = 0
@@ -113,6 +112,7 @@ class inimigo(pygame.sprite.Sprite):
     def __init__(self,img,all_sprites,all_tiros,img_tiro):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.y = random.randint(0,HEIGHT-NAVE_HEIGHT)
         self.rect.x = WIDTH-NAVE_WIDTH
@@ -153,6 +153,7 @@ class Tiro_Amigo(pygame.sprite.Sprite):
     def __init__(self, img, bottom, centerx):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.centerx = centerx
         self.rect.bottom = bottom
@@ -166,6 +167,7 @@ class Tiro_Inimigo(pygame.sprite.Sprite):
     def __init__(self, img, bottom, centerx):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
         self.rect.x = WIDTH-TIRO_WIDTH 
         self.rect.centerx = centerx
@@ -177,6 +179,7 @@ class Tiro_Inimigo(pygame.sprite.Sprite):
             self.kill()
         self.speedx = -8
 
+        
 all_sprites = pygame.sprite.Group()
 all_tiros = pygame.sprite.Group()
 all_inimigos = pygame.sprite.Group()
@@ -199,7 +202,7 @@ for i in range(2):
 
 
 kills = 0       # Eliminações do player
-vidas = 10      # Vidas da Nave
+vidas = 1      # Vidas da Nave
 pontuacao = 0   # Pontuação do player
 velocidade = 10 # Velocidade 
       
@@ -211,6 +214,7 @@ game = True
 
 FPS = 30
 clock = pygame.time.Clock()
+
 
 pygame.mixer.music.play(loops=-1)
 while game:
@@ -233,8 +237,8 @@ while game:
                 player_nave.tiro()
 
     all_sprites.update()
-    danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True)
-    danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True)
+    danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
+    danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True, pygame.sprite.collide_mask)
     for Enemy in danos:
         i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
         if fases == assets["planeta2_fundo"]:
@@ -246,7 +250,7 @@ while game:
         all_tiros2.add(i)
         kills += 1 
         pontuacao += 5
-    if kills == 4: 
+    if kills == 1: 
         fases = assets["planeta2_fundo"]
         if controle:
             i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
@@ -255,7 +259,7 @@ while game:
             all_tiros2.add(i)
             i.fases = 2
             controle = False
-    elif kills == 10:
+    elif kills == 2:
         fases = assets["planeta3_fundo"]
         if controle2:
             i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
@@ -264,10 +268,10 @@ while game:
             all_tiros2.add(i)
             i.fases = 3
             controle2 = False
-    elif kills == 18:
+    elif kills == 3:
         assets['game_over'].play()
         game = False
-        print("VOCÊ VENCEU!!!")
+            
     if fases == assets["planeta2_fundo"] and controle3:
         assets['proxima_fase'].play()
         controle3 = False
@@ -282,22 +286,24 @@ while game:
             player_nave.kill()
             player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
             all_sprites.add(player_nave)
-        else:
+        if vidas == 0:
             game = False
+    tela.fill((0,0,0))
     tela.blit(fases, (0, 0))
     all_sprites.draw(tela)
 
+
     # Colocando a Pontuação
-    text_surface = assets['pontuação'].render("{:03d}".format(pontuacao), True, (0, 255, 0))
-    text_rect = text_surface.get_rect()
-    text_rect.midtop = (WIDTH / 2,  10)
-    tela.blit(text_surface, text_rect)
+    pontuacao_tela = assets['pontuação'].render("{:03d}".format(pontuacao), True, (0, 255, 0))
+    text_rect = pontuacao_tela.get_rect()
+    text_rect.midtop = (WIDTH/2 ,  10)
+    tela.blit(pontuacao_tela, text_rect)
 
     # Colocando as vidas
-    text_surface = assets['pontuação'].render(chr(9827) * vidas, True, (0, 255, 0))
-    text_rect = text_surface.get_rect()
-    text_rect.bottomleft = (10, HEIGHT - 10)
-    tela.blit(text_surface, text_rect)
+    vida_tela = assets['pontuação'].render(chr(9827) * vidas, True, (255, 0, 0))
+    text_rect = vida_tela.get_rect()
+    text_rect.bottomright = (WIDTH, HEIGHT - 10)
+    tela.blit(vida_tela, text_rect)
 
     # ----- Atualiza estado do jogo
     pygame.display.update()  # Mostra o novo frame para o jogador
