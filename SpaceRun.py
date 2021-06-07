@@ -2,6 +2,8 @@
 import pygame 
 import random
 
+from pygame.constants import KEYUP
+
 pygame.init()
 pygame.mixer.init()
 
@@ -189,16 +191,39 @@ def tela_inicial(janela):
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                estado = QUIT 
+                state = QUIT
                 jogo = False
-            if event.type == pygame.K_SPACE:
-                estado = GAME
-             # A cada loop, redesenha o fundo e os sprites
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    state = GAME
+                    jogo = False
         janela.fill((0,0,0))
         janela.blit(tela_de_inicio, tela_de_inicio_rect)
-        # Depois de desenhar tudo, inverte o display.
         pygame.display.flip()
-    return estado
+    return state
+
+
+def tela_final(janela):
+    clock = pygame.time.Clock()
+    jogo = True
+    while jogo:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = QUIT
+                jogo = False
+            if vidas == 0:
+                state = END_SCREEN
+                jogo = False
+        font = pygame.font.SysFont(None, 48)
+        font2 = pygame.font.SysFont(None, 36)
+        gameover = font.render('GAME OVER', True, (255, 0, 0))  
+        score = font2.render('YOUR SCORE:{}'.format(pontuacao),True, (255,255,255))
+        tela.fill((0, 0, 0))  # Preenche com a cor branca
+        tela.blit(gameover, (WIDTH/2, HEIGHT/2))
+        tela.blit(score, (WIDTH/2, HEIGHT/2+30))
+        pygame.display.flip()
+    return state
 
 all_sprites = pygame.sprite.Group()
 all_tiros = pygame.sprite.Group()
@@ -222,13 +247,14 @@ for i in range(2):
 
 
 kills = 0       # Eliminações do player
-vidas = 10      # Vidas da Nave
+vidas = 1      # Vidas da Nave
 pontuacao = 0   # Pontuação do player
 velocidade = 10 # Velocidade 
 
 INIT = 0 
 GAME = 1 
 QUIT = 2 
+END_SCREEN = 3
 state = INIT
 
 controle = True
@@ -246,10 +272,10 @@ while state != QUIT:
     clock.tick(FPS)
     if state == INIT:
         state = tela_inicial(tela)
-    elif state == GAME: 
+    if state == GAME: 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                game = False
+                state = QUIT
             if event.type == pygame.KEYDOWN:
                 # Ao pressionar alguma dessas teclas o player se movimenta
                 if event.key == pygame.K_w:
@@ -263,14 +289,8 @@ while state != QUIT:
                 # Ao pressionar a barra de espaço o player realiza o disparo
                 if event.key == pygame.K_SPACE:
                     player_nave.tiro()
-    else: 
-        font = pygame.font.SysFont(None, 48)
-        font2 = pygame.font.SysFont(None, 36)
-        gameover = font.render('GAME OVER', True, (255, 0, 0))  
-        score = font2.render('YOUR SCORE:{}'.format(pontuacao),True, (255,255,255))
-        tela.fill((0, 0, 0))  # Preenche com a cor branca
-        tela.blit(gameover, (WIDTH/2, HEIGHT/2))
-        tela.blit(score, (WIDTH/2, HEIGHT/2+30))  
+    else:
+        state = tela_final(tela)
         state = QUIT
     all_sprites.update()
     danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
@@ -307,7 +327,6 @@ while state != QUIT:
             i.fases = 3
             controle2 = False
     elif kills == 3:
-        assets['game_over'].play()
         game = False
             
     if fases == assets["planeta2_fundo"] and controle3:
@@ -325,9 +344,8 @@ while state != QUIT:
             player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
             all_sprites.add(player_nave)
         if vidas == 0:
-            game = False
+            state = QUIT
     
-
     tela.fill((0,0,0))
     tela.blit(fases, (0, 0))
     all_sprites.draw(tela)
