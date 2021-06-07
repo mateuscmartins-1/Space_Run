@@ -194,7 +194,7 @@ def tela_inicial(janela):
                 state = QUIT
                 jogo = False
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_RETURN:
                     state = GAME
                     jogo = False
         janela.fill((0,0,0))
@@ -206,22 +206,25 @@ def tela_inicial(janela):
 def tela_final(janela):
     clock = pygame.time.Clock()
     jogo = True
+    state = GAME
     while jogo:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 state = QUIT
                 jogo = False
-            if vidas == 0:
-                state = END_SCREEN
+            if state == END_SCREEN:
+                assets["game_over"].play()
                 jogo = False
-        font = pygame.font.SysFont(None, 48)
-        font2 = pygame.font.SysFont(None, 36)
-        gameover = font.render('GAME OVER', True, (255, 0, 0))  
-        score = font2.render('YOUR SCORE:{}'.format(pontuacao),True, (255,255,255))
-        tela.fill((0, 0, 0))  # Preenche com a cor branca
-        tela.blit(gameover, (WIDTH/2, HEIGHT/2))
-        tela.blit(score, (WIDTH/2, HEIGHT/2+30))
+        font = pygame.font.SysFont(None, 130)
+        font2 = pygame.font.SysFont(None, 50)
+        gameover = font.render('GAME OVER, YOU LOSE!', True, (255, 0, 0))  
+        score = font2.render('YOUR SCORE: {}'.format(pontuacao),True, (0,255,0))
+        jogue_novamente = font2.render("TO PLAY AGAIN PRESS [SPACE]",True, (255,255,255))
+        janela.fill((0, 0, 0))  
+        janela.blit(gameover, (90 , 139))
+        janela.blit(score, (475, 250))
+        janela.blit(jogue_novamente,(350,400))
         pygame.display.flip()
     return state
 
@@ -289,9 +292,12 @@ while state != QUIT:
                 # Ao pressionar a barra de espaço o player realiza o disparo
                 if event.key == pygame.K_SPACE:
                     player_nave.tiro()
-    else:
+    if vidas == 0:
+        state = END_SCREEN
         state = tela_final(tela)
-        state = QUIT
+        
+        
+
     all_sprites.update()
     danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
     danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True, pygame.sprite.collide_mask)
@@ -343,8 +349,6 @@ while state != QUIT:
             player_nave.kill()
             player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
             all_sprites.add(player_nave)
-        if vidas == 0:
-            state = QUIT
     
     tela.fill((0,0,0))
     tela.blit(fases, (0, 0))
