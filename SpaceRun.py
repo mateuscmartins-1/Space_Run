@@ -66,7 +66,7 @@ class amigo(pygame.sprite.Sprite):
         self.image = img
         self.mask = pygame.mask.from_surface(self.image)
         self.rect = self.image.get_rect()
-        self.rect.centery = HEIGHT/2
+        self.rect.centery = random.randint(139, 417)
         self.rect.left = 0
         self.speedx = 0
         self.speedy = 0
@@ -122,7 +122,7 @@ class inimigo(pygame.sprite.Sprite):
         self.speedx = -3
         self.ultimo_tiro = pygame.time.get_ticks()
         self.intervalo_tiro = 10
-        self.fases = 1
+        self.fases = 1 
     def update(self):
         self.rect.x += self.speedx
         if self.rect.left < 1000:
@@ -139,6 +139,7 @@ class inimigo(pygame.sprite.Sprite):
             if self.fases == 3:
                 self.intervalo_tiro = 10 + random.randint(1,25)
                 self.tiro()
+  
     def tiro(self):
         ticks = pygame.time.get_ticks()
         ticks_passados = ticks - self.ultimo_tiro
@@ -202,7 +203,7 @@ for i in range(2):
 
 
 kills = 0       # Eliminações do player
-vidas = 1      # Vidas da Nave
+vidas = 10      # Vidas da Nave
 pontuacao = 0   # Pontuação do player
 velocidade = 10 # Velocidade 
       
@@ -239,6 +240,8 @@ while game:
     all_sprites.update()
     danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
     danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True, pygame.sprite.collide_mask)
+    
+      
     for Enemy in danos:
         i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
         if fases == assets["planeta2_fundo"]:
@@ -288,6 +291,8 @@ while game:
             all_sprites.add(player_nave)
         if vidas == 0:
             game = False
+    
+
     tela.fill((0,0,0))
     tela.blit(fases, (0, 0))
     all_sprites.draw(tela)
