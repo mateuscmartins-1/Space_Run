@@ -180,7 +180,26 @@ class Tiro_Inimigo(pygame.sprite.Sprite):
             self.kill()
         self.speedx = -8
 
-        
+def tela_inicial(janela):
+    clock = pygame.time.Clock()
+    tela_de_inicio = pygame.image.load('imgs/Spacerun.png.png').convert()
+    tela_de_inicio_rect = tela_de_inicio.get_rect()
+    jogo = True
+    while jogo:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                estado = QUIT 
+                jogo = False
+            if event.type == pygame.K_SPACE:
+                estado = GAME
+             # A cada loop, redesenha o fundo e os sprites
+        janela.fill((0,0,0))
+        janela.blit(tela_de_inicio, tela_de_inicio_rect)
+        # Depois de desenhar tudo, inverte o display.
+        pygame.display.flip()
+    return estado
+
 all_sprites = pygame.sprite.Group()
 all_tiros = pygame.sprite.Group()
 all_inimigos = pygame.sprite.Group()
@@ -206,7 +225,12 @@ kills = 0       # Eliminações do player
 vidas = 10      # Vidas da Nave
 pontuacao = 0   # Pontuação do player
 velocidade = 10 # Velocidade 
-      
+
+INIT = 0 
+GAME = 1 
+QUIT = 2 
+state = INIT
+
 controle = True
 controle2 = True
 controle3 = True
@@ -218,25 +242,36 @@ clock = pygame.time.Clock()
 
 
 pygame.mixer.music.play(loops=-1)
-while game:
+while state != QUIT:
     clock.tick(FPS)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            game = False
-        if event.type == pygame.KEYDOWN:
-            # Ao pressionar alguma dessas teclas o player se movimenta
-            if event.key == pygame.K_w:
-                player_nave.speedy -= velocidade
-            if event.key == pygame.K_a:
-                player_nave.speedx -= velocidade
-            if event.key == pygame.K_s:
-                player_nave.speedy += velocidade
-            if event.key == pygame.K_d:
-                player_nave.speedx += velocidade
-            # Ao pressionar a barra de espaço o player realiza o disparo
-            if event.key == pygame.K_SPACE:
-                player_nave.tiro()
-
+    if state == INIT:
+        state = tela_inicial(tela)
+    elif state == GAME: 
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game = False
+            if event.type == pygame.KEYDOWN:
+                # Ao pressionar alguma dessas teclas o player se movimenta
+                if event.key == pygame.K_w:
+                    player_nave.speedy -= velocidade
+                if event.key == pygame.K_a:
+                    player_nave.speedx -= velocidade
+                if event.key == pygame.K_s:
+                    player_nave.speedy += velocidade
+                if event.key == pygame.K_d:
+                    player_nave.speedx += velocidade
+                # Ao pressionar a barra de espaço o player realiza o disparo
+                if event.key == pygame.K_SPACE:
+                    player_nave.tiro()
+    else: 
+        font = pygame.font.SysFont(None, 48)
+        font2 = pygame.font.SysFont(None, 36)
+        gameover = font.render('GAME OVER', True, (255, 0, 0))  
+        score = font2.render('YOUR SCORE:{}'.format(pontuacao),True, (255,255,255))
+        tela.fill((0, 0, 0))  # Preenche com a cor branca
+        tela.blit(gameover, (WIDTH/2, HEIGHT/2))
+        tela.blit(score, (WIDTH/2, HEIGHT/2+30))  
+        state = QUIT
     all_sprites.update()
     danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
     danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True, pygame.sprite.collide_mask)
