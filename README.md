@@ -23,3 +23,11 @@ Para atirar o player deve pressionar a barra de espaço.
       (esboço)
 
 Em busca de vingança, o player irá atrás dos inimigos que obliteraram toda a população de seu planeta. Assim, ele irá passar por diversos planetas, eliminando todos que estiverem em sua frente!
+
+
+# --- Referências ---
+
+Imagens utilizadas: (adicionar links)
+
+Sons utilizados: (adicionar links)
+
