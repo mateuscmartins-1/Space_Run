@@ -1,11 +1,9 @@
 import pygame 
-from config import FPS, QUIT, INTRODUCTION
-from assets import MUSICA_ENTRADA, load_assets
-def tela_inicial(janela):
+from config import FPS, QUIT, TRANSICAO1
+from assets import TELA_INTRODUCAO, TELA_INTRODUCAO_RECT, load_assets
+def tela_de_introducao(janela):
     assets = load_assets()
     clock = pygame.time.Clock()
-    tela_de_inicio = pygame.image.load('imgs/Spacerun.png').convert()
-    tela_de_inicio_rect = tela_de_inicio.get_rect()
     jogo = True
     while jogo:
         clock.tick(FPS)
@@ -15,10 +13,9 @@ def tela_inicial(janela):
                 jogo = False
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
-                    state = INTRODUCTION
+                    state = TRANSICAO1
                     jogo = False
-        assets[MUSICA_ENTRADA].play()
         janela.fill((0,0,0))
-        janela.blit(tela_de_inicio, tela_de_inicio_rect)
+        janela.blit(assets[TELA_INTRODUCAO], assets[TELA_INTRODUCAO_RECT])
         pygame.display.flip()
     return state
