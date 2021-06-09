@@ -265,7 +265,7 @@ def tela_troca_fase2(janela):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     pygame.mixer.music.play(loops= -1)
-                    state = GAME
+                    state = GAME2
                     jogo = False
         janela.fill((0, 0, 0))  
         janela.blit(assets["planeta2"],assets["planeta2_rect"])
@@ -287,7 +287,7 @@ def tela_troca_fase3(janela):
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
                     pygame.mixer.music.play(loops= -1)
-                    state = GAME
+                    state = GAME3
                     jogo = False
         janela.fill((0, 0, 0))  
         janela.blit(assets["planeta3"],assets["planeta3_rect"])
@@ -305,8 +305,9 @@ def tela_final1(janela):
             if event.type == pygame.QUIT:
                 state = QUIT
                 jogo = False
-            if event.type == pygame.KEYUP:
+            if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
+                    print("rodou?")
                     state= INIT
                     jogo = False
         if controle:
@@ -319,7 +320,6 @@ def tela_final1(janela):
         janela.fill((0, 0, 0))  
         janela.blit(gameover, (90 , 139))
         janela.blit(jogue_novamente,(350,400))
-        janela.blit()
         pygame.display.flip()
     return state
 
@@ -327,31 +327,34 @@ def tela_final2(janela):
     clock = pygame.time.Clock()
     jogo = True
     state = END_SCREEN2
+    controle = True
     while jogo:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 state = QUIT
                 jogo = False
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RETURN:
-                        state= INIT
-                        jogo = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    print("rodou?")
+                    state= INIT
+                    jogo = False
         if controle:
             assets['you_win'].play()
             controle = False
         font = pygame.font.SysFont(None, 130)
         font2 = pygame.font.SysFont(None, 50)
-        gameover = font.render('GAME OVER! YOU WIN', True, (255, 0, 0))  
+        gameover = font.render('GAME OVER! YOU WIN', True, (0, 255, 0))  
         jogue_novamente = font2.render("PARA JOGAR NOVAMENTE PRESSIONE [ENTER]",True, (255,255,255))
         janela.fill((0, 0, 0))  
-        janela.blit(gameover, (90 , 139))
-        janela.blit(jogue_novamente,(350,400))
+        janela.blit(gameover, (100 , 139))
+        janela.blit(jogue_novamente,(200,400))
         pygame.display.flip()
     return state
 
 
 def tela_do_jogo(janela):
+    print("comecou o jogo")
     all_sprites = pygame.sprite.Group()
     all_tiros = pygame.sprite.Group()
     all_inimigos = pygame.sprite.Group()
@@ -371,12 +374,15 @@ def tela_do_jogo(janela):
     vidas = 3       # Vidas da Nave
     pontuacao = 0   # Pontuação do player
     velocidade = 10 # Velocidade 
+
+    for i in range(2):
+        i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
+        all_sprites.add(i)
+        all_inimigos.add(i)
+        all_tiros2.add(i)
     
     controle = True
-    controle1 = True
-    controle2 = True
-    controle3 = True
-    controle4 = True
+    jogo = True
     state = GAME
     FPS = 30
     clock = pygame.time.Clock()
@@ -384,10 +390,11 @@ def tela_do_jogo(janela):
     fases = assets["planeta1_fundo"]
 
 
-    while state != QUIT:
+    while jogo:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                jogo = False
                 state = QUIT
             if state == GAME:
                 assets['musica_transicao'].stop() 
@@ -404,15 +411,7 @@ def tela_do_jogo(janela):
                     # Ao pressionar a barra de espaço o player realiza o disparo
                     if event.key == pygame.K_SPACE:
                         player_nave.tiro()
-
-
-        if controle == True:
-            for i in range(2):
-                inimigo_nave = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
-                all_sprites.add(inimigo_nave)
-                all_inimigos.add(inimigo_nave)
-                all_tiros2.add(inimigo_nave)
-                controle = False   
+ 
 
         all_sprites.update()
         danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
@@ -420,43 +419,22 @@ def tela_do_jogo(janela):
         
         for Enemy in danos:
             i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
-            if fases == assets["planeta2_fundo"]:
-                i.fases = 2
-            if fases == assets["planeta3_fundo"]:
-                i.fases = 3
             all_sprites.add(i)
             all_inimigos.add(i)
             all_tiros2.add(i)
             kills += 1 
             pontuacao += 5
-        if kills == 1: 
+        if kills == 1 and controle:
+            if controle:
+                assets['proxima_fase'].play()
+                controle = False 
             state = TRANSICAO2
-            fases = assets["planeta2_fundo"]
-            if controle1:
-                i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
-                all_sprites.add(i)
-                all_inimigos.add(i)
-                all_tiros2.add(i)
-                i.fases = 2
-                controle1 = False
-        elif kills == 2:
-            state = TRANSICAO3
-            fases = assets["planeta3_fundo"]
-            if controle2:
-                i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
-                all_sprites.add(i)
-                all_inimigos.add(i)
-                all_tiros2.add(i)
-                i.fases = 3
-                controle2 = False
+            jogo = False
+      
         elif kills == 3:
             state = END_SCREEN2
-        if fases == assets["planeta2_fundo"] and controle3:
-            assets['proxima_fase'].play()
-            controle3 = False
-        elif fases == assets["planeta3_fundo"] and controle4:
-            assets['proxima_fase'].play()
-            controle4 = False
+            jogo = False
+            
         if danos:
             assets['tiro_acertado'].play()
         if danos2:
@@ -467,6 +445,7 @@ def tela_do_jogo(janela):
                 all_sprites.add(player_nave)
         if vidas == 0:
             state = END_SCREEN
+            jogo = False
             
  
         janela.fill((0,0,0))
@@ -491,6 +470,212 @@ def tela_do_jogo(janela):
         pygame.display.update()  # Mostra o novo frame para o jogador
         pygame.display.flip()
     return state
+def tela_do_jogo2(janela):
+    all_sprites = pygame.sprite.Group()
+    all_tiros = pygame.sprite.Group()
+    all_inimigos = pygame.sprite.Group()
+    all_tiros2 = pygame.sprite.Group()
+    groups = {}
+    groups['all_sprites'] = all_sprites
+    groups['all_tiros'] = all_tiros
+    groups['all_inimigos'] = all_inimigos
+    groups['all_tiros2'] = all_tiros2
+
+
+    player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
+    all_sprites.add(player_nave)
+
+    pygame.mixer.music.play(loops=-1)
+    kills = 0       # Eliminações do player
+    vidas = 3       # Vidas da Nave
+    pontuacao = 0   # Pontuação do player
+    velocidade = 10 # Velocidade 
+    
+
+    for i in range(3):
+        i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
+        all_sprites.add(i)
+        all_inimigos.add(i)
+        all_tiros2.add(i)
+
+    controle = True
+    jogo = True
+    state = GAME2
+    FPS = 30
+    clock = pygame.time.Clock()
+
+    fases = assets["planeta2_fundo"]
+
+
+    while jogo:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                jogo = False
+                state = QUIT
+            if state == GAME2:
+                assets['musica_transicao'].stop() 
+                if event.type == pygame.KEYDOWN:
+                    # Ao pressionar alguma dessas teclas o player se movimenta
+                    if event.key == pygame.K_w:
+                        player_nave.speedy -= velocidade
+                    if event.key == pygame.K_a:
+                        player_nave.speedx -= velocidade
+                    if event.key == pygame.K_s:
+                        player_nave.speedy += velocidade
+                    if event.key == pygame.K_d:
+                        player_nave.speedx += velocidade
+                    # Ao pressionar a barra de espaço o player realiza o disparo
+                    if event.key == pygame.K_SPACE:
+                        player_nave.tiro()
+        all_sprites.update()
+        danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
+        danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True, pygame.sprite.collide_mask)
+        for Enemy in danos:
+            i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
+            all_sprites.add(i)
+            all_inimigos.add(i)
+            all_tiros2.add(i)
+            kills += 1 
+            pontuacao += 5
+        if kills == 1 and controle:
+            if controle:
+                assets['proxima_fase'].play()
+                controle = False 
+            state = TRANSICAO3
+            jogo = False
+        if danos:
+            assets['tiro_acertado'].play()
+        if danos2:
+            vidas-= 1
+            if vidas != 0:
+                player_nave.kill()
+                player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
+                all_sprites.add(player_nave)
+        if vidas == 0:
+            state = END_SCREEN
+            jogo = False
+        
+ 
+        janela.fill((0,0,0))
+        janela.blit(fases, (0, 0))
+        all_sprites.draw(janela)
+
+       
+
+        # Colocando a Pontuação
+        pontuacao_tela = assets['pontuação'].render("{:03d}".format(pontuacao), True, (0, 255, 0))
+        text_rect = pontuacao_tela.get_rect()
+        text_rect.midtop = (WIDTH/2 ,  10)
+        janela.blit(pontuacao_tela, text_rect)
+
+        # Colocando as vidas
+        vida_tela = assets['pontuação'].render(chr(9827) * vidas, True, (255, 0, 0))
+        text_rect = vida_tela.get_rect()
+        text_rect.bottomright = (WIDTH, HEIGHT - 10)
+        janela.blit(vida_tela, text_rect)
+
+        # ----- Atualiza estado do jogo
+        pygame.display.update()  # Mostra o novo frame para o jogador
+        pygame.display.flip()
+    return state
+
+def tela_do_jogo3(janela):
+    all_sprites = pygame.sprite.Group()
+    all_tiros = pygame.sprite.Group()
+    all_inimigos = pygame.sprite.Group()
+    all_tiros2 = pygame.sprite.Group()
+    groups = {}
+    groups['all_sprites'] = all_sprites
+    groups['all_tiros'] = all_tiros
+    groups['all_inimigos'] = all_inimigos
+    groups['all_tiros2'] = all_tiros2
+
+
+    player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
+    all_sprites.add(player_nave)
+
+    pygame.mixer.music.play(loops=-1)
+    kills = 0       # Eliminações do player
+    vidas = 3       # Vidas da Nave
+    pontuacao = 0   # Pontuação do player
+    velocidade = 10 # Velocidade 
+    
+
+    for i in range(4):
+        i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
+        all_sprites.add(i)
+        all_inimigos.add(i)
+        all_tiros2.add(i)
+
+    jogo = True
+    state = GAME3
+    FPS = 30
+    clock = pygame.time.Clock()
+
+    fases = assets["planeta3_fundo"]
+    while jogo:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                jogo = False
+                state = QUIT
+            if state == GAME3:
+                assets['musica_transicao'].stop() 
+                if event.type == pygame.KEYDOWN:
+                    # Ao pressionar alguma dessas teclas o player se movimenta
+                    if event.key == pygame.K_w:
+                        player_nave.speedy -= velocidade
+                    if event.key == pygame.K_a:
+                        player_nave.speedx -= velocidade
+                    if event.key == pygame.K_s:
+                        player_nave.speedy += velocidade
+                    if event.key == pygame.K_d:
+                        player_nave.speedx += velocidade
+                    # Ao pressionar a barra de espaço o player realiza o disparo
+                    if event.key == pygame.K_SPACE:
+                        player_nave.tiro()
+        all_sprites.update()
+        danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
+        danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True, pygame.sprite.collide_mask)
+        for Enemy in danos:
+            i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
+            all_sprites.add(i)
+            all_inimigos.add(i)
+            all_tiros2.add(i)
+            kills += 1 
+            pontuacao += 5
+        if kills == 1:
+            state = END_SCREEN2
+            jogo = False
+        if vidas == 0:
+            state = END_SCREEN
+            jogo = False
+            
+ 
+        janela.fill((0,0,0))
+        janela.blit(fases, (0, 0))
+        all_sprites.draw(janela)
+
+       
+
+        # Colocando a Pontuação
+        pontuacao_tela = assets['pontuação'].render("{:03d}".format(pontuacao), True, (0, 255, 0))
+        text_rect = pontuacao_tela.get_rect()
+        text_rect.midtop = (WIDTH/2 ,  10)
+        janela.blit(pontuacao_tela, text_rect)
+
+        # Colocando as vidas
+        vida_tela = assets['pontuação'].render(chr(9827) * vidas, True, (255, 0, 0))
+        text_rect = vida_tela.get_rect()
+        text_rect.bottomright = (WIDTH, HEIGHT - 10)
+        janela.blit(vida_tela, text_rect)
+
+        # ----- Atualiza estado do jogo
+        pygame.display.update()  # Mostra o novo frame para o jogador
+        pygame.display.flip()
+    return state
+            
 INIT = 0 
 GAME = 1 
 QUIT = 2 
@@ -500,6 +685,8 @@ INTRODUCTION = 5
 TRANSICAO1 = 6
 TRANSICAO2 = 7
 TRANSICAO3 = 8
+GAME2 = 9
+GAME3 = 10
 FPS = 30
 
 state = INIT
@@ -507,19 +694,23 @@ state = INIT
 while state != QUIT:
     if state == INIT:
         state = tela_inicial(tela)
-    if state == INTRODUCTION:
+    elif state == INTRODUCTION:
         state = tela_de_introducao(tela)
-    if state == TRANSICAO1:
+    elif state == TRANSICAO1:
         state = tela_troca_fase1(tela)
-    if state == TRANSICAO2:
+    elif state == TRANSICAO2:
         state = tela_troca_fase2(tela)
-    if state == TRANSICAO3:
+    elif state == TRANSICAO3:
         state = tela_troca_fase3(tela)
-    if state == GAME:
+    elif state == GAME:
         state = tela_do_jogo(tela)
-    if state == END_SCREEN:
+    elif state == GAME2:
+        state = tela_do_jogo2(tela)
+    elif state == GAME3:
+        state = tela_do_jogo3(tela)
+    elif state == END_SCREEN:
         state = tela_final1(tela)
-    if state == END_SCREEN2:
+    elif state == END_SCREEN2:
         state = tela_final2(tela)
     else:
         state = QUIT
