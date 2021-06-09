@@ -4,6 +4,13 @@ SOM_TIRO = 'tiro_da_nave'
 MUSICA_ENTRADA = 'musica_entrada'
 TELA_INTRODUCAO = 'tela_introducao'
 TELA_INTRODUCAO_RECT = 'tela_introducao_rect'
+PLANETA1 = 'planeta1' 
+PLANETA2 = 'planeta2'
+PLANETA3 = 'planeta3'
+PLANETA1_RECT = 'planeta1_rect' 
+PLANETA2_RECT = 'planeta2_rect'
+PLANETA3_RECT = 'planeta3_rect'
+MUSICA_TRANSICAO = 'musica_transicao'
 def load_assets ():
     assets = {}
     #Imagens 
