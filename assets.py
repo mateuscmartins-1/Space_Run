@@ -1,5 +1,6 @@
 import pygame
 from config import WIDTH, HEIGHT, NAVE_HEIGHT, NAVE_WIDTH, TIRO_HEIGHT, TIRO_WIDTH
+SOM_TIRO = 'tiro_da_nave'
 def load_assets ():
     assets = {}
     #Imagens 
