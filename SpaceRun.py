@@ -225,10 +225,10 @@ def tela_inicial(janela):
 #         pygame.display.flip()
 #     return state
 
-def tela_final(janela):
+def tela_final1(janela):
     clock = pygame.time.Clock()
     jogo = True
-    state = GAME
+    state = END_SCREEN
     controle = True
     while jogo:
         clock.tick(FPS)
@@ -238,7 +238,7 @@ def tela_final(janela):
                 jogo = False
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
-                    state= END_SCREEN
+                    state= INIT
                     jogo = False
         if controle:
             assets['you_lose'].play()
@@ -246,15 +246,39 @@ def tela_final(janela):
         font = pygame.font.SysFont(None, 130)
         font2 = pygame.font.SysFont(None, 50)
         gameover = font.render('GAME OVER! YOU LOSE', True, (255, 0, 0))  
-        score = font2.render('PONTUAÇÃO FINAL: {}'.format(pontuacao),True, (0,255,0))
         jogue_novamente = font2.render("PARA JOGAR NOVAMENTE PRESSIONE [ENTER]",True, (255,255,255))
         janela.fill((0, 0, 0))  
         janela.blit(gameover, (90 , 139))
-        janela.blit(score, (475, 250))
         janela.blit(jogue_novamente,(350,400))
         pygame.display.flip()
     return state
 
+def tela_final2(janela):
+    clock = pygame.time.Clock()
+    jogo = True
+    state = END_SCREEN2
+    while jogo:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = QUIT
+                jogo = False
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_RETURN:
+                        state= INIT
+                        jogo = False
+        if controle:
+            assets['you_win'].play()
+            controle = False
+        font = pygame.font.SysFont(None, 130)
+        font2 = pygame.font.SysFont(None, 50)
+        gameover = font.render('GAME OVER! YOU WIN', True, (255, 0, 0))  
+        jogue_novamente = font2.render("PARA JOGAR NOVAMENTE PRESSIONE [ENTER]",True, (255,255,255))
+        janela.fill((0, 0, 0))  
+        janela.blit(gameover, (90 , 139))
+        janela.blit(jogue_novamente,(350,400))
+        pygame.display.flip()
+    return state
 
 
 def tela_do_jogo(janela):
@@ -273,9 +297,6 @@ def tela_do_jogo(janela):
     all_sprites.add(player_nave)
 
     pygame.mixer.music.play(loops=-1)
-    DONE = 0 
-    PLAYING = 1
-    state2 = PLAYING
     kills = 0       # Eliminações do player
     vidas = 3       # Vidas da Nave
     pontuacao = 0   # Pontuação do player
@@ -286,19 +307,19 @@ def tela_do_jogo(janela):
     controle2 = True
     controle3 = True
     controle4 = True
-
+    state = GAME
     FPS = 30
     clock = pygame.time.Clock()
 
     fases = assets["planeta1_fundo"]
 
 
-    while state2 != DONE:
+    while state != QUIT:
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                state2 = DONE
-            if state2 == PLAYING:
+                state = QUIT
+            if state == GAME:
                 assets['musica_entrada'].stop() 
                 if event.type == pygame.KEYDOWN:
                     # Ao pressionar alguma dessas teclas o player se movimenta
@@ -357,7 +378,7 @@ def tela_do_jogo(janela):
                 i.fases = 3
                 controle2 = False
         elif kills == 3:
-            state2 = DONE
+            state = END_SCREEN2
         if fases == assets["planeta2_fundo"] and controle3:
             assets['proxima_fase'].play()
             controle3 = False
@@ -376,7 +397,6 @@ def tela_do_jogo(janela):
             state = END_SCREEN
             
  
-
         janela.fill((0,0,0))
         janela.blit(fases, (0, 0))
         all_sprites.draw(janela)
@@ -398,11 +418,12 @@ def tela_do_jogo(janela):
         # ----- Atualiza estado do jogo
         pygame.display.update()  # Mostra o novo frame para o jogador
         pygame.display.flip()
-    return [pontuacao, state]
+    return state
 INIT = 0 
 GAME = 1 
 QUIT = 2 
 END_SCREEN = 3
+END_SCREEN2 = 4
 FPS = 30
 
 state = INIT
@@ -413,7 +434,9 @@ while state != QUIT:
     if state == GAME:
         state = tela_do_jogo(tela)
     if state == END_SCREEN:
-        state = tela_final(tela)
+        state = tela_final1(tela)
+    if state == END_SCREEN2:
+        state = tela_final2(tela)
     else:
         state = QUIT
 
