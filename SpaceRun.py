@@ -34,11 +34,14 @@ assets["planeta2_fundo"] = pygame.transform.scale(assets["planeta2_fundo"], (WID
 assets["planeta3_fundo"] = pygame.image.load('imgs/Fundo3.png').convert_alpha()
 assets["planeta3_fundo"] = pygame.transform.scale (assets["planeta3_fundo"], (WIDTH, HEIGHT))
 assets["planeta1"] = pygame.image.load ('imgs/Planeta1.png').convert_alpha()
-assets["planeta1"] = pygame.transform.scale (assets["planeta1"], (PLANETA_WIDTH,PLANETA_HEIGHT))
+assets["planeta1"] = pygame.transform.scale (assets["planeta1"], (WIDTH,HEIGHT))
+assets["planeta1_rect"] = assets["planeta1"].get_rect()
 assets["planeta2"] = pygame.image.load ('imgs/Planeta2.png').convert_alpha()
-assets["planeta2"] = pygame.transform.scale (assets["planeta2"], (PLANETA_WIDTH, PLANETA_HEIGHT))
+assets["planeta2"] = pygame.transform.scale (assets["planeta2"], (WIDTH,HEIGHT))
+assets["planeta2_rect"] = assets["planeta2"].get_rect()
 assets["planeta3"] = pygame.image.load ('imgs/Planeta3.png').convert_alpha()
-assets["planeta3"] = pygame.transform.scale (assets["planeta3"], (PLANETA_WIDTH, PLANETA_HEIGHT))
+assets["planeta3"] = pygame.transform.scale (assets["planeta3"], (WIDTH,HEIGHT))
+assets["planeta3_rect"] = assets["planeta3"].get_rect()
 assets["naveaamiga"] = pygame.image.load ('imgs/Nave_amiga.png').convert_alpha()
 assets["naveaamiga"] = pygame.transform.scale (assets["naveaamiga"], (NAVE_WIDTH, NAVE_HEIGHT))
 assets["naveinimiga"] = pygame.image.load ('imgs/Nave_inimiga.png').convert_alpha()
@@ -47,7 +50,12 @@ assets["tiro_amigo"] = pygame.image.load ('imgs/Tiro amigo.png').convert_alpha()
 assets["tiro_amigo"] = pygame.transform.scale (assets["tiro_amigo"], (TIRO_WIDTH, TIRO_HEIGHT))
 assets["tiro_inimigo"] = pygame.image.load ('imgs/Tiro inimigo.png').convert_alpha() 
 assets["tiro_inimigo"] = pygame.transform.scale (assets["tiro_inimigo"], (TIRO_WIDTH, TIRO_HEIGHT)) 
-
+assets["tela_estrelas"] = pygame.image.load ('imgs/tela_fundo.jpg').convert()
+assets["tela_estrelas"] = pygame.transform.scale(assets["tela_estrelas"], (WIDTH,HEIGHT))
+assets["tela_estrelas_rect"] = assets["tela_estrelas"].get_rect()
+assets["tela_instrucoes"] = pygame.image.load('imgs/tela_instrucoes.jpg').convert()
+assets["tela_instrucoes"] = pygame.transform.scale(assets["tela_instrucoes"], (WIDTH,HEIGHT))
+assets["tela_instrucoes_rect"] = assets["tela_instrucoes"].get_rect()
 # Fontes
 assets["pontuação"] = pygame.font.Font('fontes/PressStart2P.ttf', 25)
 assets["game_over_screen"] = pygame.font.Font('fontes/PressStart2P.ttf', 55)
@@ -62,6 +70,7 @@ assets['tiro_da_nave'] = pygame.mixer.Sound('sons/Tiro-da-nave.wav')
 assets['you_lose'] = pygame.mixer.Sound('sons/you_lose.wav')
 assets['you_win'] = pygame.mixer.Sound('sons/you_win.wav')
 assets['musica_entrada'] = pygame.mixer.Sound('sons/musica_entrada.wav')
+assets['musica_transicao'] = pygame.mixer.Sound('sons/musica_transicao.wav')
 
 # Fases
 class amigo(pygame.sprite.Sprite):
@@ -193,7 +202,7 @@ def tela_inicial(janela):
                 jogo = False
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_RETURN:
-                    state = GAME
+                    state = INTRODUCTION
                     jogo = False
         assets['musica_entrada'].play()
         janela.fill((0,0,0))
@@ -201,34 +210,94 @@ def tela_inicial(janela):
         pygame.display.flip()
     return state
 
-# def tela_troca_fases(janela):
-#     clock = pygame.time.Clock()
-#     jogo = True
-#     state = GAME
-#     while jogo:
-#         clock.tick(FPS)
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 state = QUIT
-#                 jogo = False
-#             if event.type == pygame.KEYUP:
-#                 if event.key == pygame.K_RETURN:
-#                     state = GAME
-#                     jogo = False
-#         font = pygame.font.SysFont(None, 130)
-#         font2 = pygame.font.SysFont(None, 50)
-#         gameover = font.render('Você eliminou os inimigos desse planeta! Se prepare para o próximo!', True, (255, 0, 0))  
-#         jogue_novamente = font2.render("Para ir para a próxima fase pressione ENTER",True, (255,255,255))
-#         janela.fill((0, 0, 0))  
-#         janela.blit(gameover, (90 , 139))
-#         janela.blit(jogue_novamente,(350,400))
-#         pygame.display.flip()
-#     return state
+
+def tela_de_introducao(janela):
+    clock = pygame.time.Clock()
+    jogo = True
+    while jogo:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = QUIT
+                jogo = False
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_RETURN:
+                    state = TRANSICAO1
+                    jogo = False
+        janela.fill((0,0,0))
+        janela.blit(assets["tela_instrucoes"], assets["tela_instrucoes_rect"])
+        pygame.display.flip()
+    return state
+
+def tela_troca_fase1(janela):
+    clock = pygame.time.Clock()
+    jogo = True
+    state = GAME
+    assets['musica_entrada'].stop()
+    assets['musica_transicao'].play()
+    while jogo:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = QUIT
+                jogo = False
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_RETURN:
+                    state = GAME
+                    jogo = False
+        janela.fill((0, 0, 0))  
+        janela.blit(assets["planeta1"],assets["planeta1_rect"])
+        pygame.display.flip()
+    return state
+
+def tela_troca_fase2(janela):
+    clock = pygame.time.Clock()
+    jogo = True
+    state = GAME
+    pygame.mixer.music.stop()
+    assets['musica_transicao'].play()
+    while jogo:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = QUIT
+                jogo = False
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_RETURN:
+                    pygame.mixer.music.play(loops= -1)
+                    state = GAME
+                    jogo = False
+        janela.fill((0, 0, 0))  
+        janela.blit(assets["planeta2"],assets["planeta2_rect"])
+        pygame.display.flip()
+    return state
+
+def tela_troca_fase3(janela):
+    clock = pygame.time.Clock()
+    jogo = True
+    state = GAME
+    pygame.mixer.music.stop()
+    assets['musica_transicao'].play()
+    while jogo:
+        clock.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = QUIT
+                jogo = False
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_RETURN:
+                    pygame.mixer.music.play(loops= -1)
+                    state = GAME
+                    jogo = False
+        janela.fill((0, 0, 0))  
+        janela.blit(assets["planeta3"],assets["planeta3_rect"])
+        pygame.display.flip()
+    return state
+
 
 def tela_final1(janela):
     clock = pygame.time.Clock()
     jogo = True
-    state = END_SCREEN
     controle = True
     while jogo:
         clock.tick(FPS)
@@ -250,6 +319,7 @@ def tela_final1(janela):
         janela.fill((0, 0, 0))  
         janela.blit(gameover, (90 , 139))
         janela.blit(jogue_novamente,(350,400))
+        janela.blit()
         pygame.display.flip()
     return state
 
@@ -320,7 +390,7 @@ def tela_do_jogo(janela):
             if event.type == pygame.QUIT:
                 state = QUIT
             if state == GAME:
-                assets['musica_entrada'].stop() 
+                assets['musica_transicao'].stop() 
                 if event.type == pygame.KEYDOWN:
                     # Ao pressionar alguma dessas teclas o player se movimenta
                     if event.key == pygame.K_w:
@@ -360,6 +430,7 @@ def tela_do_jogo(janela):
             kills += 1 
             pontuacao += 5
         if kills == 1: 
+            state = TRANSICAO2
             fases = assets["planeta2_fundo"]
             if controle1:
                 i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
@@ -369,6 +440,7 @@ def tela_do_jogo(janela):
                 i.fases = 2
                 controle1 = False
         elif kills == 2:
+            state = TRANSICAO3
             fases = assets["planeta3_fundo"]
             if controle2:
                 i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
@@ -424,6 +496,10 @@ GAME = 1
 QUIT = 2 
 END_SCREEN = 3
 END_SCREEN2 = 4
+INTRODUCTION = 5
+TRANSICAO1 = 6
+TRANSICAO2 = 7
+TRANSICAO3 = 8
 FPS = 30
 
 state = INIT
@@ -431,6 +507,14 @@ state = INIT
 while state != QUIT:
     if state == INIT:
         state = tela_inicial(tela)
+    if state == INTRODUCTION:
+        state = tela_de_introducao(tela)
+    if state == TRANSICAO1:
+        state = tela_troca_fase1(tela)
+    if state == TRANSICAO2:
+        state = tela_troca_fase2(tela)
+    if state == TRANSICAO3:
+        state = tela_troca_fase3(tela)
     if state == GAME:
         state = tela_do_jogo(tela)
     if state == END_SCREEN:
