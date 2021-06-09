@@ -1,9 +1,9 @@
 import pygame 
 import random 
 from config import WIDTH, HEIGHT, NAVE_HEIGHT, NAVE_WIDTH, TIRO_HEIGHT, TIRO_WIDTH
-from assets import SOM_TIRO
+
 class amigo(pygame.sprite.Sprite):
-    def __init__(self,img,all_sprites,all_tiros,img_tiro,som_tiro):
+    def __init__(self,img,all_sprites,all_tiros,img_tiro):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
         self.mask = pygame.mask.from_surface(self.image)
@@ -17,7 +17,6 @@ class amigo(pygame.sprite.Sprite):
         self.tiro_img = img_tiro
         self.ultimo_tiro = pygame.time.get_ticks()
         self.intervalo_tiro = 800
-        self.som_tiro = som_tiro
 
     def update(self):
         self.rect.x += self.speedx
