@@ -141,15 +141,8 @@ class inimigo(pygame.sprite.Sprite):
         self.speedx = -3
         self.intervalo_tiro -= 1
         if self.intervalo_tiro <= 0:
-            if self.fases == 1:
-                self.intervalo_tiro = 10 + random.randint(1,100)
-                self.tiro()
-            if self.fases == 2:
-                self.intervalo_tiro = 10 + random.randint(1,50)
-                self.tiro()
-            if self.fases == 3:
-                self.intervalo_tiro = 10 + random.randint(1,25)
-                self.tiro()
+            self.intervalo_tiro = 10 + random.randint(1,75)
+            self.tiro()
     def tiro(self):
         ticks = pygame.time.get_ticks()
         ticks_passados = ticks - self.ultimo_tiro
@@ -209,7 +202,6 @@ def tela_inicial(janela):
         janela.blit(tela_de_inicio, tela_de_inicio_rect)
         pygame.display.flip()
     return state
-
 
 def tela_de_introducao(janela):
     clock = pygame.time.Clock()
@@ -294,7 +286,6 @@ def tela_troca_fase3(janela):
         pygame.display.flip()
     return state
 
-
 def tela_final1(janela):
     clock = pygame.time.Clock()
     jogo = True
@@ -320,7 +311,7 @@ def tela_final1(janela):
         janela.fill((0, 0, 0))  
         janela.blit(assets['tela_estrelas'], assets['tela_estrelas_rect'])
         janela.blit(gameover, (90 , 139))
-        janela.blit(jogue_novamente,(350,400))
+        janela.blit(jogue_novamente,(200,400))
         pygame.display.flip()
     return state
 
@@ -350,10 +341,9 @@ def tela_final2(janela):
         janela.fill((0, 0, 0))  
         janela.blit(assets['tela_estrelas'], assets['tela_estrelas_rect'])
         janela.blit(gameover, (90 , 139))
-        janela.blit(jogue_novamente,(350,400))
+        janela.blit(jogue_novamente,(200,400))
         pygame.display.flip()
     return state
-
 
 def tela_do_jogo(janela):
     print("comecou o jogo")
@@ -366,7 +356,6 @@ def tela_do_jogo(janela):
     groups['all_tiros'] = all_tiros
     groups['all_inimigos'] = all_inimigos
     groups['all_tiros2'] = all_tiros2
-
 
     player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
     all_sprites.add(player_nave)
@@ -391,7 +380,6 @@ def tela_do_jogo(janela):
 
     fases = assets["planeta1_fundo"]
 
-
     while jogo:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -414,7 +402,6 @@ def tela_do_jogo(janela):
                     if event.key == pygame.K_SPACE:
                         player_nave.tiro()
  
-
         all_sprites.update()
         danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
         danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True, pygame.sprite.collide_mask)
@@ -439,6 +426,7 @@ def tela_do_jogo(janela):
             
         if danos:
             assets['tiro_acertado'].play()
+
         if danos2:
             vidas-= 1
             if vidas != 0:
@@ -448,13 +436,10 @@ def tela_do_jogo(janela):
         if vidas == 0:
             state = END_SCREEN
             jogo = False
-            
  
         janela.fill((0,0,0))
         janela.blit(fases, (0, 0))
         all_sprites.draw(janela)
-
-       
 
         # Colocando a Pontuação
         pontuacao_tela = assets['pontuação'].render("{:03d}".format(pontuacao), True, (0, 255, 0))
@@ -472,6 +457,7 @@ def tela_do_jogo(janela):
         pygame.display.update()  # Mostra o novo frame para o jogador
         pygame.display.flip()
     return state
+
 def tela_do_jogo2(janela):
     all_sprites = pygame.sprite.Group()
     all_tiros = pygame.sprite.Group()
@@ -483,7 +469,6 @@ def tela_do_jogo2(janela):
     groups['all_inimigos'] = all_inimigos
     groups['all_tiros2'] = all_tiros2
 
-
     player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
     all_sprites.add(player_nave)
 
@@ -492,7 +477,6 @@ def tela_do_jogo2(janela):
     vidas = 3       # Vidas da Nave
     pontuacao = 0   # Pontuação do player
     velocidade = 10 # Velocidade 
-    
 
     for i in range(3):
         i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
@@ -507,7 +491,6 @@ def tela_do_jogo2(janela):
     clock = pygame.time.Clock()
 
     fases = assets["planeta2_fundo"]
-
 
     while jogo:
         clock.tick(FPS)
@@ -530,6 +513,7 @@ def tela_do_jogo2(janela):
                     # Ao pressionar a barra de espaço o player realiza o disparo
                     if event.key == pygame.K_SPACE:
                         player_nave.tiro()
+
         all_sprites.update()
         danos = pygame.sprite.groupcollide(all_inimigos, all_tiros, True, True, pygame.sprite.collide_mask)
         danos2 = pygame.sprite.spritecollide(player_nave, all_tiros2, True, pygame.sprite.collide_mask)
@@ -557,13 +541,10 @@ def tela_do_jogo2(janela):
         if vidas == 0:
             state = END_SCREEN
             jogo = False
-        
- 
+    
         janela.fill((0,0,0))
         janela.blit(fases, (0, 0))
         all_sprites.draw(janela)
-
-       
 
         # Colocando a Pontuação
         pontuacao_tela = assets['pontuação'].render("{:03d}".format(pontuacao), True, (0, 255, 0))
@@ -593,7 +574,6 @@ def tela_do_jogo3(janela):
     groups['all_inimigos'] = all_inimigos
     groups['all_tiros2'] = all_tiros2
 
-
     player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
     all_sprites.add(player_nave)
 
@@ -603,7 +583,6 @@ def tela_do_jogo3(janela):
     pontuacao = 0   # Pontuação do player
     velocidade = 10 # Velocidade 
     
-
     for i in range(4):
         i = inimigo(assets['naveinimiga'],groups['all_sprites'],groups['all_tiros2'],assets['tiro_inimigo'])
         all_sprites.add(i)
@@ -650,16 +629,19 @@ def tela_do_jogo3(janela):
         if kills == 1:
             state = END_SCREEN2
             jogo = False
+        if danos2:
+            vidas-= 1
+            if vidas != 0:
+                player_nave.kill()
+                player_nave = amigo(assets['naveaamiga'], groups['all_sprites'], groups['all_tiros'], assets['tiro_amigo'], assets['tiro_da_nave'])
+                all_sprites.add(player_nave)
         if vidas == 0:
             state = END_SCREEN
             jogo = False
             
- 
         janela.fill((0,0,0))
         janela.blit(fases, (0, 0))
         all_sprites.draw(janela)
-
-       
 
         # Colocando a Pontuação
         pontuacao_tela = assets['pontuação'].render("{:03d}".format(pontuacao), True, (0, 255, 0))

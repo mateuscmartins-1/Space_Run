@@ -31,3 +31,14 @@ Imagens utilizadas: (adicionar links)
 
 Sons utilizados: (adicionar links)
 
+Fontes utilizadas: (adicionar links)
+
+# --- Como instalar o jogo ---
+Biblitoteca utlizada para o jogo: Pygame! Para instalar o pygame, é simples! Baixe o Anaconda (programa na internet) e digite no prompt, "pip install pygame". Caso tenha alguma dúvida, siga para esse tutorial feito pelo próprio pygame: https://www.pygame.org/wiki/GettingStarted
+
+Clone a pasta do GitHub para um diretório em seu computador.
+Abra a pasta clonada em uma IDE ou em um editor de código. Exemplo: VSCode
+Execute o arquivo "SpaceRun.py"
+
+# --- Link do vídeo de uma gameplay ---
+(adicionar links)
