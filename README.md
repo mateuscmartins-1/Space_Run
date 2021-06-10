@@ -14,7 +14,7 @@ O objetivo do Space Run é eliminar as naves inimigas e sobreviver. Para progred
 
 # --- Comandos do jogo ---
 
-Para se movimentar o player deve pressionar as teclas W (para se movimentar para cima), A(para se movimentar para baixo), S(para se movimentar para a esquerda), D(para se movimentar para a direita).
+Para se movimentar o player deve pressionar as teclas W (para se movimentar para cima), S(para se movimentar para baixo), A(para se movimentar para a esquerda), D(para se movimentar para a direita).
 
 Para atirar o player deve pressionar a barra de espaço.
 
