@@ -3,7 +3,7 @@ from config import WIDTH, HEIGHT, QUIT, INIT, INTRODUCTION, TRANSICAO1, TRANSICA
 from tela_inicial import tela_inicial
 from tela_introducao import tela_de_introducao
 from tela_troca_as_fases import tela_troca_fase1, tela_troca_fase2, tela_troca_fase3
-from telas_do_jogo import tela_do_jogo1, tela_do_jogo2, tela_do_jogo3
+from telas_do_jogo import tela_do_jogo, tela_do_jogo2, tela_do_jogo3
 from telas_finais import tela_final1, tela_final2
 
 pygame.init()

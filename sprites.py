@@ -45,7 +45,6 @@ class amigo(pygame.sprite.Sprite):
             bala = Tiro_Amigo(self.tiro_img, self.rect.bottom, self.rect.centerx)
             self.all_sprites.add(bala)
             self.all_tiros.add(bala)
-            self.som_tiro.play()
             
 class inimigo(pygame.sprite.Sprite):
     def __init__(self,img,all_sprites,all_tiros,img_tiro):
