@@ -17,9 +17,9 @@ NAVE_WIDTH = 80 #Largura da nave
 
 NAVE_HEIGHT = 90 #Altura do nave
 
-TIRO_WIDTH = 30 #Largura dos tiros
+TIRO_WIDTH = 20 #Largura dos tiros
 
-TIRO_HEIGHT = 30 #Altura dos tiros
+TIRO_HEIGHT = 20 #Altura dos tiros
 
 #estados para controle do fluxo da aplicação 
 INIT = 0 
