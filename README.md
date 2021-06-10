@@ -49,4 +49,4 @@ Execute o arquivo "SpaceRun.py"
 
 # --- Link do vídeo de uma gameplay do jogo ---
 
-youtube.com/watch?v=o8DmlbZ1550
+https://www.youtube.com/watch?v=o8DmlbZ1550
