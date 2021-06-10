@@ -41,11 +41,12 @@ COPYRIGHT SONS
 
 
 # --- Como instalar o jogo ---
-Biblitoteca utlizada para o jogo: Pygame! Para instalar o pygame, é simples! Baixe o Anaconda (programa na internet) e digite no prompt, "pip install pygame". Caso tenha alguma dúvida, siga para esse tutorial feito pelo próprio pygame: https://www.pygame.org/wiki/GettingStarted
+Biblitoteca utlizada para o jogo: Pygame
+É simples para baixar o Pygame! Baixe o Anaconda (programa na internet) e digite no prompt, "pip install pygame". Caso tenha alguma dúvida, siga para esse tutorial feito pelo próprio pygame: https://www.pygame.org/wiki/GettingStarted
 
 Clone a pasta do GitHub para um diretório em seu computador.
 Abra a pasta clonada em uma IDE ou em um editor de código. Exemplo: VSCode
-Execute o arquivo "SpaceRun.py"
+Execute então o arquivo "SpaceRun_O_JOGO.PY"
 
 # --- Link do vídeo de uma gameplay do jogo ---
 
